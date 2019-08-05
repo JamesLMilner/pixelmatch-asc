@@ -14,21 +14,6 @@ const wasmModule = loader.instantiate(new WebAssembly.Module(new Uint8Array(buf)
 // console.log(wasmModule.test(ptr1));
 // //console.log(wasmModule);
 
-const options = {threshold: 0.05};
-
-// diffTest('1a', '1b', '1diff', options, 143);
-// diffTest('2a', '2b', '2diff', {
-//     threshold: 0.05,
-//     alpha: 0.5,
-//     aaColor: [0, 192, 0],
-//     diffColor: [255, 0, 255]
-// }, 12437);
-// diffTest('3a', '3b', '3diff', options, 212);
-// diffTest('4a', '4b', '4diff', options, 36049);
-// diffTest('5a', '5b', '5diff', options, 0);
-// diffTest('6a', '6b', '6diff', options, 51);
-// diffTest('6a', '6a', '6empty', {threshold: 0}, 0);
-
 // test('throws error if image sizes do not match', (t) => {
 //     t.throws(() => wasmModule.pixelmatch(new Uint8Array(8), new Uint8Array(9), null, 2, 1), 'Image sizes do not match');
 //     t.end();
@@ -134,6 +119,98 @@ test('drawGrayPixel', (t) => {
 
 });
 
+test('colorDelta', (t) => {
+    const oneByOneRed = new PNG({ height: 1, width: 1 });
+    const redArr = new Uint8Array(oneByOneRed.data, oneByOneRed.redArr, 1);
+    redArr[0] = 255;
+    redArr[1] = 0;
+    redArr[2] = 0;
+    redArr[3] = 255;
+
+    const redPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Int8Array_ID, redArr));
+
+    const oneByOneGreen = new PNG({ height: 1, width: 1 });
+    const greenArr = new Uint8Array(oneByOneGreen.data, oneByOneGreen.byteOffset, 1);
+    greenArr[0] = 0;
+    greenArr[1] = 255;
+    greenArr[2] = 0;
+    greenArr[3] = 255;
+
+    const greenPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Int8Array_ID, greenArr));
+
+    const delta = wasmModule.colorDelta(redPtr, greenPtr, 0, 0, false);
+
+    t.equal(delta, 24298.875, 'float comparison should be equal'); //24298.8755187344
+    t.end();
+});
+
+
+test('hasManySiblings', (t) => {
+
+    const oneByOneRed = new PNG({ height: 3, width: 3 });
+    const redArr = new Uint8Array(oneByOneRed.data, oneByOneRed.redArr, 1);
+    for (var i = 0; i < redArr.length; i+= 4) {
+        redArr[i] = 255;
+        redArr[i + 1] = 0;
+        redArr[i + 2] = 0;
+        redArr[i + 3] = 255;
+    }
+
+    const redPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Int8Array_ID, redArr));
+
+    const mixedArr = new Uint8Array(oneByOneRed.data, oneByOneRed.redArr, 1);
+    for (var i = 0; i < mixedArr.length; i+= 4) {
+        mixedArr[i] = i !== 16 ? 255 : 0;
+        mixedArr[i + 1] = i !== 16 ? 0 : 255;
+        mixedArr[i + 2] = 0;
+        mixedArr[i + 3] = 255;
+    }
+
+    const mixedPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Int8Array_ID, mixedArr));
+    const siblings = Boolean(wasmModule.hasManySiblings(redPtr, 1, 1, 3, 3, false));
+    const noSiblings = Boolean(wasmModule.hasManySiblings(mixedPtr, 1, 1, 3, 3, false));
+
+    t.ok(siblings, 'should many siblings');
+    t.notOk(noSiblings, 'should not many siblings');
+    t.end();
+
+});
+
+test('antialiased', (t) => {
+
+    const img1 = readImage('1a');
+    const img2 = readImage('1b');
+    const {width, height} = img1;
+    const len = width * height;
+
+    const diffPNG = new PNG({width, height});
+    const diffArr = new Int8Array(diffPNG.data, diffPNG.byteOffset, len);
+    const img1Arr = new Int8Array(img1.data, img1.byteOffset, len);
+    const img2Arr = new Int8Array(img2.data, img2.byteOffset, len);
+
+    const ptr1 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Int8Array_ID, img1Arr));
+    const ptr2 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Int8Array_ID, img2Arr));
+
+    let antialiasedPixels = 0;
+
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+
+            if (
+                wasmModule.antialiased(ptr1, x, y, width, height, ptr2) ||
+                wasmModule.antialiased(ptr2, x, y, width, height, ptr1)
+            ) {
+                antialiasedPixels++;
+            }
+
+        }
+    }
+
+    t.equal(antialiasedPixels, 2807);
+    t.end();
+});
+
+
 function diffTest(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
     const name = `comparing ${imgPath1} to ${imgPath2}, ${JSON.stringify(options)}`;
 
@@ -143,52 +220,62 @@ function diffTest(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
         const {width, height} = img1;
         const len = width * height;
 
-        // console.log(img1.data, img2.data);
         const diffPNG = new PNG({width, height});
-
-        // const diff = new PNG({width, height});
         const diffArr = new Int8Array(diffPNG.data, diffPNG.byteOffset, len);
         const img1Arr = new Int8Array(img1.data, img1.byteOffset, len);
         const img2Arr = new Int8Array(img2.data, img2.byteOffset, len);
-
-        // console.log(diffArr.filter((v) => v !== 0));
-        // console.log(diff);
 
         const ptr1 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Int8Array_ID, img1Arr));
         const ptr2 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Int8Array_ID, img2Arr));
         const diffPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Int8Array_ID, diffArr));
 
-        // const ptr1 = wasmModule.newArray(a32);
-        // const ptr2 = wasmModule.newArray(b32);
-        // const diffPtr = wasmModule.newArray(diff);
-        // threshold: f32,     	// matching threshold (0 to 1); smaller is more sensitive
-        // includeAA: bool,    	// whether to skip anti-aliasing detection
-        // alpha: f32, 			// opacity of original image in diff ouput
-        // aaColor: Int8Array,	// color of anti-aliased pixels in diff output
-        // diffColor: Int8Array	// color of different pixels in diff output
         const mismatch = wasmModule.pixelmatch(ptr1, ptr2, diffPtr, width, height, options.threshold, options.includeAA, options.alpha, options.aaColor, options.diffColor);
         const mismatch2 = wasmModule.pixelmatch(ptr1, ptr2, null, width, height, options.threshold, options.includeAA, options.alpha, options.aaColor, options.diffColor);
 
-        const resultDiff = new Int8Array(wasmModule.__getArray(diffPtr));
-        // console.log(resultDiff.filter((v) => v !== -1));
-    
+        diffPNG.data = toBuffer(new Uint8Array(wasmModule.__getArray(diffPtr)));
+
         const expectedDiff = readImage(diffPath);
-        // console.log(resultDiff instanceof Array);
-        // console.log(mismatch, mismatch2);
-        // console.log(toBuffer(resultDiff.buffer));
-        // const image = PNG.sync.read(toBuffer(resultDiff.buffer));
-      
 
         writeImage(name, diffPNG);
-        t.ok(diffPNG.data.equals(expectedDiff.data), 'diff image');
+        t.ok(diffPNG.data.equals(expectedDiff.data), 'diff image data should match');
 
-        t.equal(mismatch, expectedMismatch, 'number of mismatched pixels');
+        t.equal(mismatch, expectedMismatch, 'number of mismatched pixels should match');
         t.equal(mismatch, mismatch2, 'number of mismatched pixels without diff');
 
         wasmModule.__release(ptr1);
         wasmModule.__release(ptr2);
+        wasmModule.__release(diffPtr);
         t.end();
     });
+}
+
+
+const options = {
+    threshold: 0.05,
+    alpha: 0.1
+};
+
+diffTest('1a', '1b', '1diff', options, 143);
+diffTest('2a', '2b', '2diff', {
+    threshold: 0.05,
+    alpha: 0.5,
+    aaColor: [0, 192, 0],
+    diffColor: [255, 0, 255]
+}, 12437);
+diffTest('3a', '3b', '3diff', options, 212);
+diffTest('4a', '4b', '4diff', options, 36049);
+diffTest('5a', '5b', '5diff', options, 0);
+diffTest('6a', '6b', '6diff', options, 51);
+diffTest('6a', '6a', '6empty', {threshold: 0.0}, 0);
+
+
+// UTILITY FUNCTIONS
+function toBuffer(view) {
+    var buf = Buffer.alloc(view.byteLength);
+    for (var i = 0; i < buf.length; ++i) {
+        buf[i] = view[i];
+    }
+    return buf;
 }
 
 function readImage(name) {
