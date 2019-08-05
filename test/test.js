@@ -16,15 +16,6 @@ const {
     performance
 } = require('perf_hooks');
 
-// test('throws error if image sizes do not match', (t) => {
-//     t.throws(() => wasmModule.pixelmatch(new Uint8Array(8), new Uint8Array(9), null, 2, 1), 'Image sizes do not match');
-//     t.end();
-// });
-
-// test('throws error if image sizes do not match width and height', (t) => {
-//     t.throws(() => wasmModule.pixelmatch(new Uint8Array(9), new Uint8Array(9), null, 2, 1), 'Image data size does not match width/height');
-//     t.end();
-// });
 
 // test('throws error if provided wrong image data format', (t) => {
 //     const err = 'Image data: Uint8Array, Uint8ClampedArray or Buffer expected';
@@ -35,6 +26,30 @@ const {
 //     t.throws(() => wasmModule.pixelmatch(arr, arr, bad, 20, 20), err);
 //     t.end();
 // });
+
+test('throws error if image sizes do not match', (t) => {
+
+    const png1 = new PNG({width: 1, height: 1});
+    const png2 = new PNG({width: 2, height: 2})
+
+    const ptr1 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, png1.data));
+    const ptr2 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, png2.data));
+
+    t.equal(wasmModule.pixelmatch(ptr1, ptr2, null, 2, 1), -1, 'Image sizes do not match');
+    t.end();
+});
+
+test('throws error if image sizes do not match width and height', (t) => {
+    const png1 = new PNG({width: 2, height: 2});
+    const png2 = new PNG({width: 2, height: 2})
+
+    const ptr1 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, png1.data));
+    const ptr2 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, png2.data));
+
+    t.equal(wasmModule.pixelmatch(ptr1, ptr2, null, 1, 1), -2, 'Image sizes do not match');
+    t.end();
+});
+
 
 test('draws a red pixel correctly', (t) => {
     const oneByOne = new PNG({ height: 1, width: 1 });
@@ -215,29 +230,49 @@ test('antialiased', (t) => {
 function diffTest(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
     const name = `comparing ${imgPath1} to ${imgPath2}, ${JSON.stringify(options)}`;
 
+    const defaultOptions = {
+        threshold: 0.1,         // matching threshold (0 to 1); smaller is more sensitive
+        includeAA: false,       // whether to skip anti-aliasing detection
+        alpha: 0.1,             // opacity of original image in diff ouput
+        aaColor: [255, 255, 0], // color of anti-aliased pixels in diff output
+        diffColor: [255, 0, 0]  // color of different pixels in diff output
+    };
+
     test(name, (t) => {
+
+        options = {...defaultOptions, ...options};
+
         const img1 = readImage(imgPath1);
         const img2 = readImage(imgPath2);
         const {width, height} = img1;
-        const len = width * height;
-
         const diffPNG = new PNG({width, height});
-        const diffArr = new Uint8Array(diffPNG.data, diffPNG.byteOffset, len);
-        const img1Arr = new Uint8Array(img1.data, img1.byteOffset, len);
-        const img2Arr = new Uint8Array(img2.data, img2.byteOffset, len);
 
-        const ptr1 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, img1Arr));
-        const ptr2 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, img2Arr));
-        const diffPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, diffArr));
+        const ptr1 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, img1.data));
+        const ptr2 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, img2.data));
+        const diffPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, diffPNG.data));
 
         const start = performance.now();
-        const mismatch = wasmModule.pixelmatch(ptr1, ptr2, diffPtr, width, height, options.threshold, options.includeAA, options.alpha, options.aaColor, options.diffColor);
+        const mismatch = wasmModule.pixelmatch(
+            ptr1,
+            ptr2,
+            diffPtr,
+            width,
+            height,
+            options.threshold,
+            options.includeAA,
+            options.alpha,
+            options.aaColor && options.aaColor[0],
+            options.aaColor && options.aaColor[1],
+            options.aaColor && options.aaColor[2],
+            options.diffColor && options.diffColor[0],
+            options.diffColor && options.diffColor[1],
+            options.diffColor && options.diffColor[2]
+        );
         const mismatch2 = wasmModule.pixelmatch(ptr1, ptr2, null, width, height, options.threshold, options.includeAA, options.alpha, options.aaColor, options.diffColor);
+        diffPNG.data = Buffer.from(new Uint8Array(wasmModule.__getArray(diffPtr)));
         const end = performance.now();
 
-        diffPNG.data = Buffer.from(new Uint8Array(wasmModule.__getArray(diffPtr)));
-
-        console.log(imgPath1, imgPath2, end - start, "ms");
+        console.log("\n", imgPath1, imgPath2, end - start, "ms \n");
 
         const expectedDiff = readImage(diffPath);
 
@@ -253,7 +288,6 @@ function diffTest(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
         t.end();
     });
 }
-
 
 const options = {
     threshold: 0.05,

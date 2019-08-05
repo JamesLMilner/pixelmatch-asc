@@ -11,31 +11,33 @@ export function pixelmatch(
 	width: i32,
 	height: i32,
 
-	// // Can't use interfaces to make an options object here: https://docs.assemblyscript.org/basics/limitations#oop
+	// Can't use interfaces to make an options object here: https://docs.assemblyscript.org/basics/limitations#oop
 	threshold: f32,     	// matching threshold (0 to 1); smaller is more sensitive
 	includeAA: bool,    	// whether to skip anti-aliasing detection
-	alpha: f32, 			// opacity of original image in diff ouput
-	aaColor: Uint8Array,	// color of anti-aliased pixels in diff output
-	diffColor: Uint8Array	// color of different pixels in diff output
+	alpha: f32,				// opacity of original image in diff ouput
+	aaR: f32, 				// r color of anti-aliased pixels in diff output
+	aaG: f32,				// g color of anti-aliased pixels in diff output
+	aaB: f32,				// b color of anti-aliased pixels in diff output
+	diffR: f32,				// r color of different pixels in diff output
+	diffG: f32,				// g color of different pixels in diff output
+	diffB: f32				// b color of different pixels in diff output
 ): i32 {
 
 	// No Errors: https://docs.assemblyscript.org/basics/limitations#exceptions
 
-	// if (!isPixelData(img1) || !isPixelData(img2) || !isPixelData(output)) {
-	// 	return -1; // throw new Error('Image data: Uint8Array, Uint8ClampedArray or Buffer expected.');
-	// }
+	// Image sizes do not match
+	if (img1.length !== img2.length || (output !== null && output.length !== img1.length)) {
+		return -1; 
+	}
 
-	// if (img1.length !== img2.length || (output !== null && output.length !== img1.length)) {
-	// 	return -2; // throw new Error('Image sizes do not match.');
-	// }
+	// Image data size does not match width/height.
+	if (img1.length !== width * height * 4) {
+		return -2;
+	}
 
-	// if (img1.length !== width * height * 4) {
-	// 	return -3; // throw new Error('Image data size does not match width/height.');
-	// }
-
-	threshold = threshold || 0.1 as f32;
+	threshold = isNaN(threshold) ? 0.1 : threshold;
 	includeAA = includeAA || false;
-	alpha = alpha || 0.1 as f32; 		// opacity of original image in diff ouput
+	alpha = isNaN(alpha) ? 0.1 : alpha;
 
 	// check if images are identical
 	const len: i32 = width * height;
@@ -63,13 +65,13 @@ export function pixelmatch(
 	const maxDelta: f32 = 35215 * threshold * threshold;
 
 	let diff: i32 = 0;
-	const aaR: f32 = aaColor[0] as f32 || 255 as f32; 
-	const aaG: f32 = aaColor[1] as f32 || 255 as f32; 
-	const aaB: f32 = aaColor[2] as f32 || 0 as f32;
+	aaR = isNaN(aaR) ? 255.0 : aaR; // (aaColor[0] as f32) + 0.0 || 255 as f32; 
+	aaG = isNaN(aaG) ? 255.0 : aaG // 192; // 255.0 // (aaColor[1] as f32) + 0.0 || 255 as f32; 
+	aaB = isNaN(aaB) ? 0 : aaB// (aaColor[2] as f32) + 0.0 || 0 as f32;
 
-	const diffR: f32 = diffColor[0] as f32 || 255 as f32;
-	const diffG: f32 = diffColor[1] as f32 || 0 as f32;
-	const diffB: f32 = diffColor[2] as f32 || 0 as f32;
+	diffR = isNaN(diffR) ? 255.0 : diffR; // (aaColor[0] as f32) + 0.0 || 255 as f32; 
+	diffG = isNaN(diffG) ? 0 : diffG // 192; // 255.0 // (aaColor[1] as f32) + 0.0 || 255 as f32; 
+	diffB = isNaN(diffB) ? 255.0 : diffB// (aaColor[2] as f32) + 0.0 || 0 as f32;
 
 	// compare each pixel of one image against the other one
 	for (let y = 0; y < height; y++) {
@@ -111,11 +113,6 @@ export function pixelmatch(
 	// // return the number of different pixels
 	return diff;
 }
-
-// // function isPixelData(arr: Uint8Array): bool {
-// // 	// work around instanceof Uint8Array not working properly in some Jest environments
-// // 	return arr instanceof Uint8Array; // ArrayBuffer.isView(arr); // && arr.constructor.BYTES_PER_ELEMENT === 1;
-// // }
 
 // // check if a pixel is likely a part of anti-aliasing;
 // // based on "Anti-aliased Pixel and Intensity Slope Detector" paper by V. Vysniauskas, 2009

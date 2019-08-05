@@ -4,7 +4,7 @@
     "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --sourceMap --validate --optimize",
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized",
     "test": "npm run asbuild:untouched && node test/test.js",
-    "test:optimized": "npm run asbuild:optimized && node test/test.js"
+    "bench": "npm run asbuild:optimized && node test/bench.js"
   },
   "dependencies": {
     "pngjs": "^3.4.0",

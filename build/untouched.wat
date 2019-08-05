@@ -7,7 +7,8 @@
  (type $FUNCSIG$ii (func (param i32) (result i32)))
  (type $FUNCSIG$viii (func (param i32 i32 i32)))
  (type $FUNCSIG$vi (func (param i32)))
- (type $FUNCSIG$iiiiiififii (func (param i32 i32 i32 i32 i32 f32 i32 f32 i32 i32) (result i32)))
+ (type $FUNCSIG$iiiiiififffffff (func (param i32 i32 i32 i32 i32 f32 i32 f32 f32 f32 f32 f32 f32 f32) (result i32)))
+ (type $FUNCSIG$if (func (param f32) (result i32)))
  (type $FUNCSIG$viifi (func (param i32 i32 f32 i32)))
  (type $FUNCSIG$ffff (func (param f32 f32 f32) (result f32)))
  (type $FUNCSIG$fff (func (param f32 f32) (result f32)))
@@ -3230,7 +3231,20 @@
   local.get $0
   global.set $~lib/rt/pure/CUR
  )
- (func $~lib/typedarray/Uint8Array#__get (; 27 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/arraybuffer/ArrayBufferView#get:byteLength (; 27 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  local.get $0
+  i32.load offset=8
+ )
+ (func $~lib/typedarray/Uint8Array#get:length (; 28 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  local.get $0
+  call $~lib/arraybuffer/ArrayBufferView#get:byteLength
+ )
+ (func $~lib/number/isNaN<f32> (; 29 ;) (type $FUNCSIG$if) (param $0 f32) (result i32)
+  local.get $0
+  local.get $0
+  f32.ne
+ )
+ (func $~lib/typedarray/Uint8Array#__get (; 30 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $1
   local.get $0
   i32.load offset=8
@@ -3249,7 +3263,7 @@
   i32.add
   i32.load8_u
  )
- (func $assembly/index/rgb2y (; 28 ;) (type $FUNCSIG$ffff) (param $0 f32) (param $1 f32) (param $2 f32) (result f32)
+ (func $assembly/index/rgb2y (; 31 ;) (type $FUNCSIG$ffff) (param $0 f32) (param $1 f32) (param $2 f32) (result f32)
   local.get $0
   f32.const 0.29889529943466187
   f32.mul
@@ -3262,7 +3276,7 @@
   f32.mul
   f32.add
  )
- (func $assembly/index/blend (; 29 ;) (type $FUNCSIG$fff) (param $0 f32) (param $1 f32) (result f32)
+ (func $assembly/index/blend (; 32 ;) (type $FUNCSIG$fff) (param $0 f32) (param $1 f32) (result f32)
   f32.const 255
   local.get $0
   f32.const 255
@@ -3271,7 +3285,7 @@
   f32.mul
   f32.add
  )
- (func $~lib/typedarray/Uint8Array#__set (; 30 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/typedarray/Uint8Array#__set (; 33 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
   local.get $1
   local.get $0
   i32.load offset=8
@@ -3291,7 +3305,7 @@
   local.get $2
   i32.store8
  )
- (func $assembly/index/drawPixel (; 31 ;) (type $FUNCSIG$viifff) (param $0 i32) (param $1 i32) (param $2 f32) (param $3 f32) (param $4 f32)
+ (func $assembly/index/drawPixel (; 34 ;) (type $FUNCSIG$viifff) (param $0 i32) (param $1 i32) (param $2 f32) (param $3 f32) (param $4 f32)
   local.get $0
   call $~lib/rt/pure/__retain
   drop
@@ -3331,7 +3345,7 @@
   local.get $0
   call $~lib/rt/pure/__release
  )
- (func $assembly/index/drawGrayPixel (; 32 ;) (type $FUNCSIG$viifi) (param $0 i32) (param $1 i32) (param $2 f32) (param $3 i32)
+ (func $assembly/index/drawGrayPixel (; 35 ;) (type $FUNCSIG$viifi) (param $0 i32) (param $1 i32) (param $2 f32) (param $3 i32)
   (local $4 f32)
   (local $5 f32)
   (local $6 f32)
@@ -3396,7 +3410,7 @@
   local.get $3
   call $~lib/rt/pure/__release
  )
- (func $assembly/index/rgb2i (; 33 ;) (type $FUNCSIG$ffff) (param $0 f32) (param $1 f32) (param $2 f32) (result f32)
+ (func $assembly/index/rgb2i (; 36 ;) (type $FUNCSIG$ffff) (param $0 f32) (param $1 f32) (param $2 f32) (result f32)
   local.get $0
   f32.const 0.5959779620170593
   f32.mul
@@ -3409,7 +3423,7 @@
   f32.mul
   f32.sub
  )
- (func $assembly/index/rgb2q (; 34 ;) (type $FUNCSIG$ffff) (param $0 f32) (param $1 f32) (param $2 f32) (result f32)
+ (func $assembly/index/rgb2q (; 37 ;) (type $FUNCSIG$ffff) (param $0 f32) (param $1 f32) (param $2 f32) (result f32)
   local.get $0
   f32.const 0.21147017180919647
   f32.mul
@@ -3422,7 +3436,7 @@
   f32.mul
   f32.add
  )
- (func $assembly/index/colorDelta (; 35 ;) (type $FUNCSIG$fiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result f32)
+ (func $assembly/index/colorDelta (; 38 ;) (type $FUNCSIG$fiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result f32)
   (local $5 f32)
   (local $6 f32)
   (local $7 f32)
@@ -3638,7 +3652,7 @@
   call $~lib/rt/pure/__release
   local.get $16
  )
- (func $assembly/index/hasManySiblings (; 36 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
+ (func $assembly/index/hasManySiblings (; 39 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
   (local $5 f64)
   (local $6 f64)
   (local $7 f64)
@@ -3880,7 +3894,7 @@
   call $~lib/rt/pure/__release
   local.get $13
  )
- (func $assembly/index/antialiased (; 37 ;) (type $FUNCSIG$iiiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (result i32)
+ (func $assembly/index/antialiased (; 40 ;) (type $FUNCSIG$iiiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (result i32)
   (local $6 f64)
   (local $7 f64)
   (local $8 i32)
@@ -4180,21 +4194,15 @@
   call $~lib/rt/pure/__release
   local.get $20
  )
- (func $assembly/index/pixelmatch (; 38 ;) (type $FUNCSIG$iiiiiififii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 f32) (param $6 i32) (param $7 f32) (param $8 i32) (param $9 i32) (result i32)
-  (local $10 i32)
-  (local $11 i32)
-  (local $12 i32)
-  (local $13 f32)
-  (local $14 f32)
-  (local $15 f32)
-  (local $16 f32)
+ (func $assembly/index/pixelmatch (; 41 ;) (type $FUNCSIG$iiiiiififffffff) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 f32) (param $6 i32) (param $7 f32) (param $8 f32) (param $9 f32) (param $10 f32) (param $11 f32) (param $12 f32) (param $13 f32) (result i32)
+  (local $14 i32)
+  (local $15 i32)
+  (local $16 i32)
   (local $17 f32)
-  (local $18 f32)
-  (local $19 f32)
+  (local $18 i32)
+  (local $19 i32)
   (local $20 i32)
-  (local $21 i32)
-  (local $22 i32)
-  (local $23 f32)
+  (local $21 f32)
   local.get $0
   call $~lib/rt/pure/__retain
   drop
@@ -4204,19 +4212,65 @@
   local.get $2
   call $~lib/rt/pure/__retain
   drop
-  local.get $8
-  call $~lib/rt/pure/__retain
-  drop
-  local.get $9
-  call $~lib/rt/pure/__retain
-  drop
-  local.get $5
-  f32.const 0
-  f32.ne
-  if (result f32)
-   local.get $5
+  local.get $0
+  call $~lib/typedarray/Uint8Array#get:length
+  local.get $1
+  call $~lib/typedarray/Uint8Array#get:length
+  i32.ne
+  if (result i32)
+   i32.const 1
   else   
+   local.get $2
+   i32.const 0
+   i32.ne
+   if (result i32)
+    local.get $2
+    call $~lib/typedarray/Uint8Array#get:length
+    local.get $0
+    call $~lib/typedarray/Uint8Array#get:length
+    i32.ne
+   else    
+    i32.const 0
+   end
+  end
+  if
+   i32.const -1
+   local.set $14
+   local.get $0
+   call $~lib/rt/pure/__release
+   local.get $1
+   call $~lib/rt/pure/__release
+   local.get $2
+   call $~lib/rt/pure/__release
+   local.get $14
+   return
+  end
+  local.get $0
+  call $~lib/typedarray/Uint8Array#get:length
+  local.get $3
+  local.get $4
+  i32.mul
+  i32.const 4
+  i32.mul
+  i32.ne
+  if
+   i32.const -2
+   local.set $14
+   local.get $0
+   call $~lib/rt/pure/__release
+   local.get $1
+   call $~lib/rt/pure/__release
+   local.get $2
+   call $~lib/rt/pure/__release
+   local.get $14
+   return
+  end
+  local.get $5
+  call $~lib/number/isNaN<f32>
+  if (result f32)
    f32.const 0.10000000149011612
+  else   
+   local.get $5
   end
   local.set $5
   local.get $6
@@ -4227,91 +4281,86 @@
   end
   local.set $6
   local.get $7
-  f32.const 0
-  f32.ne
+  call $~lib/number/isNaN<f32>
   if (result f32)
-   local.get $7
-  else   
    f32.const 0.10000000149011612
+  else   
+   local.get $7
   end
   local.set $7
   local.get $3
   local.get $4
   i32.mul
-  local.set $10
+  local.set $14
   i32.const 1
-  local.set $11
+  local.set $15
   block $break|0
    i32.const 0
-   local.set $12
+   local.set $16
    loop $loop|0
-    local.get $12
-    local.get $10
+    local.get $16
+    local.get $14
     i32.lt_s
     i32.eqz
     br_if $break|0
     local.get $0
-    local.get $12
+    local.get $16
     call $~lib/typedarray/Uint8Array#__get
     local.get $1
-    local.get $12
+    local.get $16
     call $~lib/typedarray/Uint8Array#__get
     i32.ne
     if
      i32.const 0
-     local.set $11
+     local.set $15
      br $break|0
     end
-    local.get $12
+    local.get $16
     i32.const 1
     i32.add
-    local.set $12
+    local.set $16
     br $loop|0
    end
    unreachable
   end
-  local.get $11
+  local.get $15
   if
    local.get $2
    if
     block $break|1
      i32.const 0
-     local.set $12
+     local.set $16
      loop $loop|1
-      local.get $12
-      local.get $10
+      local.get $16
+      local.get $14
       i32.lt_s
       i32.eqz
       br_if $break|1
       local.get $0
       i32.const 4
-      local.get $12
+      local.get $16
       i32.mul
       local.get $7
       local.get $2
       call $assembly/index/drawGrayPixel
-      local.get $12
+      local.get $16
       i32.const 1
       i32.add
-      local.set $12
+      local.set $16
       br $loop|1
      end
      unreachable
     end
    end
    i32.const 0
-   local.set $12
+   local.set $16
    local.get $0
    call $~lib/rt/pure/__release
    local.get $1
    call $~lib/rt/pure/__release
    local.get $2
    call $~lib/rt/pure/__release
-   local.get $8
-   call $~lib/rt/pure/__release
-   local.get $9
-   call $~lib/rt/pure/__release
-   local.get $12
+   local.get $16
    return
   end
   f32.const 35215
@@ -4319,130 +4368,100 @@
   f32.mul
   local.get $5
   f32.mul
-  local.set $13
-  i32.const 0
-  local.set $12
-  local.get $8
-  i32.const 0
-  call $~lib/typedarray/Uint8Array#__get
-  f32.convert_i32_u
-  local.tee $14
-  f32.const 0
-  f32.ne
-  if (result f32)
-   local.get $14
-  else   
-   f32.const 255
-  end
-  local.set $14
-  local.get $8
-  i32.const 1
-  call $~lib/typedarray/Uint8Array#__get
-  f32.convert_i32_u
-  local.tee $15
-  f32.const 0
-  f32.ne
-  if (result f32)
-   local.get $15
-  else   
-   f32.const 255
-  end
-  local.set $15
-  local.get $8
-  i32.const 2
-  call $~lib/typedarray/Uint8Array#__get
-  f32.convert_i32_u
-  local.tee $16
-  f32.const 0
-  f32.ne
-  if (result f32)
-   local.get $16
-  else   
-   f32.const 0
-  end
-  local.set $16
-  local.get $9
-  i32.const 0
-  call $~lib/typedarray/Uint8Array#__get
-  f32.convert_i32_u
-  local.tee $17
-  f32.const 0
-  f32.ne
-  if (result f32)
-   local.get $17
-  else   
-   f32.const 255
-  end
   local.set $17
-  local.get $9
-  i32.const 1
-  call $~lib/typedarray/Uint8Array#__get
-  f32.convert_i32_u
-  local.tee $18
-  f32.const 0
-  f32.ne
+  i32.const 0
+  local.set $16
+  local.get $8
+  call $~lib/number/isNaN<f32>
   if (result f32)
-   local.get $18
+   f32.const 255
   else   
-   f32.const 0
+   local.get $8
   end
-  local.set $18
+  local.set $8
   local.get $9
-  i32.const 2
-  call $~lib/typedarray/Uint8Array#__get
-  f32.convert_i32_u
-  local.tee $19
-  f32.const 0
-  f32.ne
+  call $~lib/number/isNaN<f32>
   if (result f32)
-   local.get $19
+   f32.const 255
   else   
-   f32.const 0
+   local.get $9
   end
-  local.set $19
+  local.set $9
+  local.get $10
+  call $~lib/number/isNaN<f32>
+  if (result f32)
+   f32.const 0
+  else   
+   local.get $10
+  end
+  local.set $10
+  local.get $11
+  call $~lib/number/isNaN<f32>
+  if (result f32)
+   f32.const 255
+  else   
+   local.get $11
+  end
+  local.set $11
+  local.get $12
+  call $~lib/number/isNaN<f32>
+  if (result f32)
+   f32.const 0
+  else   
+   local.get $12
+  end
+  local.set $12
+  local.get $13
+  call $~lib/number/isNaN<f32>
+  if (result f32)
+   f32.const 255
+  else   
+   local.get $13
+  end
+  local.set $13
   block $break|2
    i32.const 0
-   local.set $20
+   local.set $18
    loop $loop|2
-    local.get $20
+    local.get $18
     local.get $4
     i32.lt_s
     i32.eqz
     br_if $break|2
     block $break|3
      i32.const 0
-     local.set $21
+     local.set $19
      loop $loop|3
-      local.get $21
+      local.get $19
       local.get $3
       i32.lt_s
       i32.eqz
       br_if $break|3
-      local.get $20
+      local.get $18
       local.get $3
       i32.mul
-      local.get $21
+      local.get $19
       i32.add
       i32.const 4
       i32.mul
-      local.set $22
+      local.set $20
       local.get $0
       local.get $1
-      local.get $22
-      local.get $22
+      local.get $20
+      local.get $20
       i32.const 0
       call $assembly/index/colorDelta
-      local.set $23
-      local.get $23
-      local.get $13
+      local.set $21
+      local.get $21
+      local.get $17
       f32.gt
       if
        local.get $6
        i32.eqz
        if (result i32)
         local.get $0
-        local.get $21
-        local.get $20
+        local.get $19
+        local.get $18
         local.get $3
         local.get $4
         local.get $1
@@ -4451,8 +4470,8 @@
          i32.const 1
         else         
          local.get $1
-         local.get $21
-         local.get $20
+         local.get $19
+         local.get $18
          local.get $3
          local.get $4
          local.get $0
@@ -4465,68 +4484,64 @@
         local.get $2
         if
          local.get $2
-         local.get $22
-         local.get $14
-         local.get $15
-         local.get $16
+         local.get $20
+         local.get $8
+         local.get $9
+         local.get $10
          call $assembly/index/drawPixel
         end
        else        
         local.get $2
         if
          local.get $2
-         local.get $22
-         local.get $17
-         local.get $18
-         local.get $19
+         local.get $20
+         local.get $11
+         local.get $12
+         local.get $13
          call $assembly/index/drawPixel
         end
-        local.get $12
+        local.get $16
         i32.const 1
         i32.add
-        local.set $12
+        local.set $16
        end
       else       
        local.get $2
        if
         local.get $0
-        local.get $22
+        local.get $20
         local.get $7
         local.get $2
         call $assembly/index/drawGrayPixel
        end
       end
-      local.get $21
+      local.get $19
       i32.const 1
       i32.add
-      local.set $21
+      local.set $19
       br $loop|3
      end
      unreachable
     end
-    local.get $20
+    local.get $18
     i32.const 1
     i32.add
-    local.set $20
+    local.set $18
     br $loop|2
    end
    unreachable
   end
-  local.get $12
-  local.set $20
+  local.get $16
+  local.set $18
   local.get $0
   call $~lib/rt/pure/__release
   local.get $1
   call $~lib/rt/pure/__release
   local.get $2
   call $~lib/rt/pure/__release
-  local.get $8
-  call $~lib/rt/pure/__release
-  local.get $9
-  call $~lib/rt/pure/__release
-  local.get $20
+  local.get $18
  )
- (func $~lib/memory/memory.init (; 39 ;) (type $FUNCSIG$viiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $~lib/memory/memory.init (; 42 ;) (type $FUNCSIG$viiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   i32.const 328
   i32.const 376
   i32.const 35
@@ -4534,7 +4549,7 @@
   call $~lib/builtins/abort
   unreachable
  )
- (func $~lib/memory/memory.drop (; 40 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $~lib/memory/memory.drop (; 43 ;) (type $FUNCSIG$vi) (param $0 i32)
   i32.const 328
   i32.const 376
   i32.const 42
@@ -4542,7 +4557,7 @@
   call $~lib/builtins/abort
   unreachable
  )
- (func $~lib/memory/memory.repeat (; 41 ;) (type $FUNCSIG$viiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $~lib/memory/memory.repeat (; 44 ;) (type $FUNCSIG$viiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i32)
   (local $5 i32)
   i32.const 0
@@ -4573,7 +4588,7 @@
    unreachable
   end
  )
- (func $~lib/memory/memory.compare (; 42 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/memory/memory.compare (; 45 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -4635,7 +4650,7 @@
    end
   end
  )
- (func $~lib/rt/pure/__visit (; 43 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/rt/pure/__visit (; 46 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
   local.get $0
@@ -4765,7 +4780,7 @@
    end
   end
  )
- (func $~lib/rt/__visit_members (; 44 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/rt/__visit_members (; 47 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   block $switch$1$default
    block $switch$1$case$4
@@ -4790,9 +4805,9 @@
   end
   unreachable
  )
- (func $null (; 45 ;) (type $FUNCSIG$v)
+ (func $null (; 48 ;) (type $FUNCSIG$v)
  )
- (func $assembly/index/colorDelta|trampoline (; 46 ;) (type $FUNCSIG$fiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result f32)
+ (func $assembly/index/colorDelta|trampoline (; 49 ;) (type $FUNCSIG$fiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result f32)
   block $1of1
    block $0of1
     block $outOfRange
@@ -4813,7 +4828,7 @@
   local.get $4
   call $assembly/index/colorDelta
  )
- (func $~lib/setargc (; 47 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $~lib/setargc (; 50 ;) (type $FUNCSIG$vi) (param $0 i32)
   local.get $0
   global.set $~lib/argc
  )
