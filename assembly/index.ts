@@ -1,7 +1,7 @@
 // import "allocator/tlsf";
 export { memory };
 
-export const Int8Array_ID = idof<Uint8Array>();
+export const Uint8Array_ID = idof<Uint8Array>();
 
 export function pixelmatch(
 	// No Union Types so we have to have just Uint8Array :( - https://github.com/AssemblyScript/assemblyscript/issues/555
@@ -37,7 +37,7 @@ export function pixelmatch(
 	includeAA = includeAA || false;
 	alpha = alpha || 0.1 as f32; 		// opacity of original image in diff ouput
 
-	// // check if images are identical
+	// check if images are identical
 	const len: i32 = width * height;
 	let identical: bool = true;
 
@@ -48,7 +48,8 @@ export function pixelmatch(
 		}
 	}
 
-	if (identical) { // fast path if identical
+	// fast path if identical
+	if (identical) { 
 		if (output) {
 			for (let i = 0; i < len; i++) {
 				drawGrayPixel(img1, 4 * i, alpha, output);
