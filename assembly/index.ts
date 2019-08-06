@@ -1,7 +1,7 @@
 export const Uint8Array_ID = idof<Uint8Array>();
 
-export function pixelmatch(
-	// No Union Types so we have to have just Uint8Array :( - https://github.com/AssemblyScript/assemblyscript/issues/555
+export function pixelmatch(	
+	// For simplicity and due to lack of union types we just handle Uint8Array
 	img1: Uint8Array,
 	img2: Uint8Array,
 	output: Uint8Array,
@@ -61,14 +61,14 @@ export function pixelmatch(
 	// 35215 is the maximum possible value for the YIQ difference metric
 	const maxDelta: f32 = 35215 * threshold * threshold;
 
-	let diff = 0;
-	aaR = isNaN(aaR) ? 255.0 : aaR; // (aaColor[0] as f32) + 0.0 || 255 as f32;
-	aaG = isNaN(aaG) ? 255.0 : aaG; // 192; // 255.0 // (aaColor[1] as f32) + 0.0 || 255 as f32;
-	aaB = isNaN(aaB) ?    .0 : aaB; // (aaColor[2] as f32) + 0.0 || 0 as f32;
+	let diff: i32 = 0;
+	aaR = isNaN(aaR) ? 255.0 : aaR; 
+	aaG = isNaN(aaG) ? 255.0 : aaG;
+	aaB = isNaN(aaB) ? 0 : aaB;
 
-	diffR = isNaN(diffR) ? 255.0 : diffR; // (aaColor[0] as f32) + 0.0 || 255 as f32;
-	diffG = isNaN(diffG) ?    .0 : diffG; // 192; // 255.0 // (aaColor[1] as f32) + 0.0 || 255 as f32;
-	diffB = isNaN(diffB) ? 255.0 : diffB; // (aaColor[2] as f32) + 0.0 || 0 as f32;
+	diffR = isNaN(diffR) ? 255.0 : diffR;
+	diffG = isNaN(diffG) ? 0 : diffG;
+	diffB = isNaN(diffB) ? 255.0 : diffB;
 
 	// compare each pixel of one image against the other one
 	for (let y = 0; y < height; y++) {
