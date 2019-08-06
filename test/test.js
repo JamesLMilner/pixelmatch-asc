@@ -89,12 +89,12 @@ test('rgb2y', (t) => {
     t.ok(almostEqual(wasmModule.rgb2y(255, 24, 24), 93.04481685), 'float comparison should be equal');
     t.ok(almostEqual(wasmModule.rgb2y(255, 143, 143), 176.47627615), 'float comparison should be equal');
     t.ok(almostEqual(wasmModule.rgb2y(255, 138, 138), 172.97075265), 'float comparison should be equal');
-    
+
     t.end();
 });
 
 test('rgb2q', (t) => {
-    
+
     t.ok(almostEqual(wasmModule.rgb2q(255, 255, 255), 0), 'float comparison should be equal');
     t.ok(almostEqual(wasmModule.rgb2q(255, 240, 240), 3.1720525499999894), 'float comparison should be equal');
     t.ok(almostEqual(wasmModule.rgb2q(255, 237, 237), 3.806463060000013), 'float comparison should be equal');
@@ -104,7 +104,7 @@ test('rgb2q', (t) => {
 });
 
 test('drawGrayPixel', (t) => {
-    
+
     const oneByOneInput = new PNG({ height: 1, width: 1 });
     const inputLen = 1;
     const imgArr = new Uint8Array(oneByOneInput.data, oneByOneInput.byteOffset, inputLen);
@@ -157,7 +157,7 @@ test('colorDelta', (t) => {
 
     const delta = wasmModule.colorDelta(redPtr, greenPtr, 0, 0, false);
 
-    t.equal(delta, 24298.875, 'float comparison should be equal'); //24298.8755187344
+    t.equal(delta, 24298.8755187344, 'float comparison should be equal'); //24298.8755187344
     t.end();
 });
 
@@ -177,7 +177,7 @@ test('hasManySiblings', (t) => {
 
     const mixedArr = new Uint8Array(oneByOneRed.data, oneByOneRed.redArr, 1);
     for (var i = 0; i < mixedArr.length; i+= 4) {
-        mixedArr[i] = i !== 16 ? 255 : 0;
+        mixedArr[i + 0] = i !== 16 ? 255 : 0;
         mixedArr[i + 1] = i !== 16 ? 0 : 255;
         mixedArr[i + 2] = 0;
         mixedArr[i + 3] = 255;
@@ -268,7 +268,7 @@ function diffTest(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
             options.diffColor && options.diffColor[2]
         );
         const mismatch2 = wasmModule.pixelmatch(ptr1, ptr2, null, width, height, options.threshold, options.includeAA, options.alpha, options.aaColor, options.diffColor);
-        
+
         // Reassign data back to the diff PNG
         diffPNG.data = Buffer.from(new Uint8Array(wasmModule.__getArray(diffPtr)));
 

@@ -9,15 +9,15 @@ export function pixelmatch(
 	height: i32,
 
 	// Can't use interfaces to make an options object here: https://docs.assemblyscript.org/basics/limitations#oop
-	threshold: f32,     	// matching threshold (0 to 1); smaller is more sensitive
-	includeAA: bool,    	// whether to skip anti-aliasing detection
-	alpha: f32,				// opacity of original image in diff ouput
-	aaR: f32, 				// r color of anti-aliased pixels in diff output
-	aaG: f32,				// g color of anti-aliased pixels in diff output
-	aaB: f32,				// b color of anti-aliased pixels in diff output
-	diffR: f32,				// r color of different pixels in diff output
-	diffG: f32,				// g color of different pixels in diff output
-	diffB: f32				// b color of different pixels in diff output
+	threshold: f64,   // matching threshold (0 to 1); smaller is more sensitive
+	includeAA: bool,  // whether to skip anti-aliasing detection
+	alpha: f64,				// opacity of original image in diff ouput
+	aaR: f64, 				// r color of anti-aliased pixels in diff output
+	aaG: f64,				  // g color of anti-aliased pixels in diff output
+	aaB: f64,				  // b color of anti-aliased pixels in diff output
+	diffR: f64,				// r color of different pixels in diff output
+	diffG: f64,				// g color of different pixels in diff output
+	diffB: f64				// b color of different pixels in diff output
 ): i32 {
 
 	// No Errors: https://docs.assemblyscript.org/basics/limitations#exceptions
@@ -34,7 +34,7 @@ export function pixelmatch(
 
 	threshold = isNaN(threshold) ? 0.1 : threshold;
 	includeAA = includeAA || false;
-	alpha = isNaN(alpha) ? 0.1 : alpha;
+	alpha     = isNaN(alpha) ? 0.1 : alpha;
 
 	// check if images are identical
 	let len = width * height;
@@ -59,9 +59,9 @@ export function pixelmatch(
 
 	// maximum acceptable square distance between two colors;
 	// 35215 is the maximum possible value for the YIQ difference metric
-	let maxDelta: f32 = 35215 * threshold * threshold;
-
+	let maxDelta = 35215.0 * threshold * threshold;
 	let diff = 0;
+
 	aaR = isNaN(aaR) ? 255.0 : aaR;
 	aaG = isNaN(aaG) ? 255.0 : aaG;
 	aaB = isNaN(aaB) ?   0.0 : aaB;
@@ -77,18 +77,15 @@ export function pixelmatch(
 			let pos = (y * width + x) * 4;
 
 			// squared YUV distance between colors at this pixel position
-			let delta = colorDelta(img1, img2, pos, pos, false);
+			let delta = colorDelta(img1, img2, pos, pos);
 
 			// the color difference is above the threshold
 			if (delta > maxDelta) {
 				// check it's a real rendering difference or just anti-aliasing
-				if (
-					!includeAA &&
-					(
-						antialiased(img1, x, y, width, height, img2) ||
-						antialiased(img2, x, y, width, height, img1)
-					)
-				) {
+				if (!includeAA && (
+					antialiased(img1, x, y, width, height, img2) ||
+					antialiased(img2, x, y, width, height, img1)
+				)) {
 					// // one of the pixels is anti-aliasing; draw as yellow and do not count as difference
 					if (output) {
 						drawPixel(output, pos, aaR, aaG, aaB);
@@ -121,8 +118,8 @@ export function antialiased(img: Uint8Array, x1: i32, y1: i32, width: i32, heigh
 	let pos = (y1 * width + x1) * 4;
 	let zeroes = i32(x1 === x0 || x1 === x2 || y1 === y0 || y1 === y2);
 
-	let min: f32 = 0;
-	let max: f32 = 0;
+	let min = 0.0;
+	let max = 0.0;
 
 	let minX = -1;
 	let minY = -1;
@@ -205,30 +202,30 @@ export function hasManySiblings(img: Uint8Array, x1: i32, y1: i32, width: i32, h
 // // calculate color difference according to the paper "Measuring perceived color difference
 // // using YIQ NTSC transmission color space in mobile applications" by Y. Kotsarenko and F. Ramos
 
-export function colorDelta(img1: Uint8Array, img2: Uint8Array, k: i32, m: i32, yOnly: bool = false): f32 {
-	let r1 = unchecked(img1[k + 0]) as f32;
-	let g1 = unchecked(img1[k + 1]) as f32;
-	let b1 = unchecked(img1[k + 2]) as f32;
-	let a1 = unchecked(img1[k + 3]) as f32;
+export function colorDelta(img1: Uint8Array, img2: Uint8Array, k: i32, m: i32, yOnly: bool = false): f64 {
+	let r1 = unchecked(img1[k + 0]) as f64;
+	let g1 = unchecked(img1[k + 1]) as f64;
+	let b1 = unchecked(img1[k + 2]) as f64;
+	let a1 = unchecked(img1[k + 3]) as f64;
 
-	let r2 = unchecked(img2[m + 0]) as f32;
-	let g2 = unchecked(img2[m + 1]) as f32;
-	let b2 = unchecked(img2[m + 2]) as f32;
-	let a2 = unchecked(img2[m + 3]) as f32;
+	let r2 = unchecked(img2[m + 0]) as f64;
+	let g2 = unchecked(img2[m + 1]) as f64;
+	let b2 = unchecked(img2[m + 2]) as f64;
+	let a2 = unchecked(img2[m + 3]) as f64;
 
 	if (a1 === a2 && r1 === r2 && g1 === g2 && b1 === b2) {
 		return 0;
 	}
 
-	if (a1 < (255 as f32)) {
-		a1 *= (1.0 / 255 as f32);
+	if (a1 < 255) {
+		a1 *= 1.0 / 255;
 		r1 = blend(r1, a1);
 		g1 = blend(g1, a1);
 		b1 = blend(b1, a1);
 	}
 
-	if (a2 < (255 as f32)) {
-		a2 *= (1.0 / 255 as f32);
+	if (a2 < 255) {
+		a2 *= 1.0 / 255;
 		r2 = blend(r2, a2);
 		g2 = blend(g2, a2);
 		b2 = blend(b2, a2);
@@ -247,28 +244,28 @@ export function colorDelta(img1: Uint8Array, img2: Uint8Array, k: i32, m: i32, y
 }
 
 @inline
-export function rgb2y(r: f32, g: f32, b: f32): f32 {
-	return (r * 0.29889531 as f32) + (g * 0.58662247 as f32) + (b * 0.11448223 as f32);
+export function rgb2y(r: f64, g: f64, b: f64): f64 {
+	return r * 0.29889531 + (g * 0.58662247 as f64) + (b * 0.11448223 as f64);
 }
 
 @inline
-export function rgb2i(r: f32, g: f32, b: f32): f32 {
-	return (r * 0.59597799 as f32) - (g * 0.27417610 as f32) - (b * 0.32180189 as f32);
+export function rgb2i(r: f64, g: f64, b: f64): f64 {
+	return r * 0.59597799 - g * 0.27417610 - b * 0.32180189;
 }
 
 @inline
-export function rgb2q(r: f32, g: f32, b: f32): f32 {
-	return (r * 0.21147017 as f32) - (g * 0.52261711 as f32) + (b * 0.31114694 as f32);
+export function rgb2q(r: f64, g: f64, b: f64): f64 {
+	return r * 0.21147017 - g * 0.52261711 + b * 0.31114694;
 }
 
 // // blend semi-transparent color with white
 @inline
-export function blend(c: f32, a: f32): f32 {
-	return (255 as f32) + (c - (255 as f32)) * a;
+export function blend(c: f64, a: f64): f64 {
+	return 255.0 + (c - 255.0) * a;
 }
 
 @inline
-export function drawPixel(output: Uint8Array, pos: i32, r: f32, g: f32, b: f32): void {
+export function drawPixel(output: Uint8Array, pos: i32, r: f64, g: f64, b: f64): void {
 	unchecked(output[pos + 0] = r as u8);
 	unchecked(output[pos + 1] = g as u8);
 	unchecked(output[pos + 2] = b as u8);
@@ -276,13 +273,13 @@ export function drawPixel(output: Uint8Array, pos: i32, r: f32, g: f32, b: f32):
 }
 
 @inline
-export function drawGrayPixel(img: Uint8Array, i: i32, alpha: f32, output: Uint8Array): void {
-	let r = img[i + 0] as f32;
-	let g = img[i + 1] as f32;
-	let b = img[i + 2] as f32;
+export function drawGrayPixel(img: Uint8Array, i: i32, alpha: f64, output: Uint8Array): void {
+	let r = unchecked(img[i + 0]);
+	let g = unchecked(img[i + 1]);
+	let b = unchecked(img[i + 2]);
 
 	let c1 = rgb2y(r, g, b);
-	let c2 = (alpha * (img[i + 3] as f32)) / (255 as f32);
+	let c2 = unchecked(img[i + 3]) * alpha * (1.0 / 255.0);
 
 	let val = blend(c1, c2);
 	drawPixel(output, i, val, val, val);
