@@ -312,7 +312,9 @@ function readImage(name) {
     return PNG.sync.read(fs.readFileSync(path.join(__dirname, `fixtures/${name}.png`)));
 }
 function writeImage(name, image) {
-    fs.writeFileSync(path.join(__dirname, `results/${name}.png`), PNG.sync.write(image));
+    const resultsDir = path.join(__dirname, 'results');
+    if (!fs.existsSync(resultsDir)) fs.mkdirSync(resultsDir);
+    fs.writeFileSync(path.join(resultsDir, `${name}.png`), PNG.sync.write(image));
 }
 
 function almostEqual(n1, n2) {
