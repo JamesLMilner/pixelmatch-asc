@@ -1,6 +1,6 @@
 export const Uint8Array_ID = idof<Uint8Array>();
 
-export function pixelmatch(	
+export function pixelmatch(
 	// For simplicity and due to lack of union types we just handle Uint8Array
 	img1: Uint8Array,
 	img2: Uint8Array,
@@ -59,25 +59,25 @@ export function pixelmatch(
 
 	// maximum acceptable square distance between two colors;
 	// 35215 is the maximum possible value for the YIQ difference metric
-	const maxDelta: f32 = 35215 * threshold * threshold;
+	let maxDelta: f32 = 35215 * threshold * threshold;
 
-	let diff: i32 = 0;
-	aaR = isNaN(aaR) ? 255.0 : aaR; 
+	let diff = 0;
+	aaR = isNaN(aaR) ? 255.0 : aaR;
 	aaG = isNaN(aaG) ? 255.0 : aaG;
-	aaB = isNaN(aaB) ? 0 : aaB;
+	aaB = isNaN(aaB) ?   0.0 : aaB;
 
 	diffR = isNaN(diffR) ? 255.0 : diffR;
-	diffG = isNaN(diffG) ? 0 : diffG;
+	diffG = isNaN(diffG) ?   0.0 : diffG;
 	diffB = isNaN(diffB) ? 255.0 : diffB;
 
 	// compare each pixel of one image against the other one
 	for (let y = 0; y < height; y++) {
 		for (let x = 0; x < width; x++) {
 
-			const pos = (y * width + x) * 4;
+			let pos = (y * width + x) * 4;
 
 			// squared YUV distance between colors at this pixel position
-			const delta = colorDelta(img1, img2, pos, pos, false);
+			let delta = colorDelta(img1, img2, pos, pos, false);
 
 			// the color difference is above the threshold
 			if (delta > maxDelta) {
@@ -137,7 +137,7 @@ export function antialiased(img: Uint8Array, x1: i32, y1: i32, width: i32, heigh
 			}
 
 			// brightness delta between the center pixel and adjacent one
-			const delta = colorDelta(img, img, pos, (((y * width + x) * 4) as i32), true);
+			const delta = colorDelta(img, img, pos, (y * width + x) * 4, true);
 
 			// count the number of equal, darker and brighter adjacent pixels
 			if (delta === 0) {
