@@ -41,7 +41,7 @@ export function pixelmatch(
 	let identical = true;
 
 	for (let i = 0; i < len; i++) {
-		if (img1[i] !== img2[i]) {
+		if (unchecked(img1[i]) !== unchecked(img2[i])) {
 			identical = false;
 			break;
 		}
@@ -72,9 +72,10 @@ export function pixelmatch(
 
 	// compare each pixel of one image against the other one
 	for (let y = 0; y < height; y++) {
+    let stride = y * width << 2;
 		for (let x = 0; x < width; x++) {
 
-			let pos = (y * width + x) * 4;
+			let pos = stride + (x << 2);
 
 			// squared YUV distance between colors at this pixel position
 			let delta = colorDelta(img1, img2, pos, pos);
@@ -138,7 +139,7 @@ export function antialiased(img: Uint8Array, x1: i32, y1: i32, width: i32, heigh
 
 			// count the number of equal, darker and brighter adjacent pixels
 			if (delta === 0) {
-				zeroes++;
+				++zeroes;
 				// if found more than 2 equal siblings, it's definitely not anti-aliasing
 				if (zeroes > 2) {
 					return false;
@@ -160,7 +161,7 @@ export function antialiased(img: Uint8Array, x1: i32, y1: i32, width: i32, heigh
 	}
 
 	// if there are no both darker and brighter pixels among siblings, it's not anti-aliasing
-	if (min === 0 || max === 0) {
+	if (i32(min === 0) | i32(max === 0)) {
 		return false;
 	}
 
@@ -182,15 +183,16 @@ export function hasManySiblings(img: Uint8Array, x1: i32, y1: i32, width: i32, h
 	let zeroes = i32(x1 === x0) | i32(x1 === x2) | i32(y1 === y0) | i32(y1 === y2);
 
 	// go through 8 adjacent pixels
-	for (let x = x0; x <= x2; x++) {
-		for (let y = y0; y <= y2; y++) {
-			if (x === x1 && y === y1) continue;
+  for (let y = y0; y <= y2; y++) {
+    let stride = y * width << 2;
+	  for (let x = x0; x <= x2; x++) {
+			if (i32(x === x1) & i32(y === y1)) continue;
 
-			let pos2 = (y * width + x) * 4
-			if (unchecked(img[pos + 0]) === unchecked(img[pos2 + 0]) &&
-					unchecked(img[pos + 1]) === unchecked(img[pos2 + 1]) &&
-					unchecked(img[pos + 2]) === unchecked(img[pos2 + 2]) &&
-					unchecked(img[pos + 3]) === unchecked(img[pos2 + 3])) zeroes++;
+			let pos2 = stride + (x << 2);
+			if (unchecked(img[pos + 0] === img[pos2 + 0]) &&
+					unchecked(img[pos + 1] === img[pos2 + 1]) &&
+					unchecked(img[pos + 2] === img[pos2 + 2]) &&
+					unchecked(img[pos + 3] === img[pos2 + 3])) ++zeroes;
 
 			if (zeroes > 2) return true;
 		}
