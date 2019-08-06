@@ -11,13 +11,13 @@ export function pixelmatch(
 	// Can't use interfaces to make an options object here: https://docs.assemblyscript.org/basics/limitations#oop
 	threshold: f64,   // matching threshold (0 to 1); smaller is more sensitive
 	includeAA: bool,  // whether to skip anti-aliasing detection
-	alpha: f64,				// opacity of original image in diff ouput
-	aaR: f64, 				// r color of anti-aliased pixels in diff output
-	aaG: f64,				  // g color of anti-aliased pixels in diff output
-	aaB: f64,				  // b color of anti-aliased pixels in diff output
-	diffR: f64,				// r color of different pixels in diff output
-	diffG: f64,				// g color of different pixels in diff output
-	diffB: f64				// b color of different pixels in diff output
+	alpha: f64,       // opacity of original image in diff ouput
+	aaR: f64,         // r color of anti-aliased pixels in diff output
+	aaG: f64,         // g color of anti-aliased pixels in diff output
+	aaB: f64,         // b color of anti-aliased pixels in diff output
+	diffR: f64,       // r color of different pixels in diff output
+	diffG: f64,       // g color of different pixels in diff output
+	diffB: f64        // b color of different pixels in diff output
 ): i32 {
 
 	// No Errors: https://docs.assemblyscript.org/basics/limitations#exceptions
