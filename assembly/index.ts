@@ -95,7 +95,7 @@ export function pixelmatch(
 					if (output) {
 						drawPixel(output, pos, diffR, diffG, diffB);
 					}
-					diff++;
+					++diff;
 				}
 			} else if (output) {
 				// pixels are similar; draw background as grayscale image blended with white
@@ -116,7 +116,7 @@ export function antialiased(img: Uint8Array, x1: i32, y1: i32, width: i32, heigh
 	let x2 = min(x1 + 1, width - 1);
 	let y2 = min(y1 + 1, height - 1);
 	let pos = (y1 * width + x1) * 4;
-	let zeroes = i32(x1 === x0 || x1 === x2 || y1 === y0 || y1 === y2);
+	let zeroes = i32(x1 === x0) | i32(x1 === x2) | i32(y1 === y0) | i32(y1 === y2);
 
 	let min = 0.0;
 	let max = 0.0;
@@ -129,12 +129,12 @@ export function antialiased(img: Uint8Array, x1: i32, y1: i32, width: i32, heigh
 	// go through 8 adjacent pixels
 	for (let x = x0; x <= x2; x++) {
 		for (let y = y0; y <= y2; y++) {
-			if (x === x1 && y === y1) {
+			if (i32(x === x1) & i32(y === y1)) {
 				continue;
 			}
 
 			// brightness delta between the center pixel and adjacent one
-			const delta = colorDelta(img, img, pos, (y * width + x) * 4, true);
+			let delta = colorDelta(img, img, pos, (y * width + x) * 4, true);
 
 			// count the number of equal, darker and brighter adjacent pixels
 			if (delta === 0) {
@@ -179,7 +179,7 @@ export function hasManySiblings(img: Uint8Array, x1: i32, y1: i32, width: i32, h
 	let x2 = min(x1 + 1, width - 1);
 	let y2 = min(y1 + 1, height - 1);
 	let pos = (y1 * width + x1) * 4;
-	let zeroes = i32(x1 === x0 || x1 === x2 || y1 === y0 || y1 === y2);
+	let zeroes = i32(x1 === x0) | i32(x1 === x2) | i32(y1 === y0) | i32(y1 === y2);
 
 	// go through 8 adjacent pixels
 	for (let x = x0; x <= x2; x++) {
@@ -213,18 +213,18 @@ export function colorDelta(img1: Uint8Array, img2: Uint8Array, k: i32, m: i32, y
 	let b2 = unchecked(img2[m + 2]) as f64;
 	let a2 = unchecked(img2[m + 3]) as f64;
 
-	if (a1 === a2 && r1 === r2 && g1 === g2 && b1 === b2) {
+	if (i32(a1 === a2) & i32(r1 === r2) & i32(g1 === g2) & i32(b1 === b2)) {
 		return 0;
 	}
 
-	if (a1 < 255) {
+	if (a1 < 255.0) {
 		a1 *= 1.0 / 255;
 		r1 = blend(r1, a1);
 		g1 = blend(g1, a1);
 		b1 = blend(b1, a1);
 	}
 
-	if (a2 < 255) {
+	if (a2 < 255.0) {
 		a2 *= 1.0 / 255;
 		r2 = blend(r2, a2);
 		g2 = blend(g2, a2);
@@ -245,7 +245,7 @@ export function colorDelta(img1: Uint8Array, img2: Uint8Array, k: i32, m: i32, y
 
 @inline
 export function rgb2y(r: f64, g: f64, b: f64): f64 {
-	return r * 0.29889531 + (g * 0.58662247 as f64) + (b * 0.11448223 as f64);
+	return r * 0.29889531 + g * 0.58662247 + b * 0.11448223;
 }
 
 @inline

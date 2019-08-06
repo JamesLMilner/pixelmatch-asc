@@ -3355,27 +3355,18 @@
   local.get $8
   local.get $12
   f64.eq
-  if (result i32)
-   local.get $5
-   local.get $9
-   f64.eq
-  else   
-   i32.const 0
-  end
-  if (result i32)
-   local.get $6
-   local.get $10
-   f64.eq
-  else   
-   i32.const 0
-  end
-  if (result i32)
-   local.get $7
-   local.get $11
-   f64.eq
-  else   
-   i32.const 0
-  end
+  local.get $5
+  local.get $9
+  f64.eq
+  i32.and
+  local.get $6
+  local.get $10
+  f64.eq
+  i32.and
+  local.get $7
+  local.get $11
+  f64.eq
+  i32.and
   if
    f64.const 0
    local.set $13
@@ -3696,32 +3687,18 @@
   local.get $1
   local.get $5
   i32.eq
-  local.tee $10
-  if (result i32)
-   local.get $10
-  else   
-   local.get $1
-   local.get $7
-   i32.eq
-  end
-  local.tee $10
-  if (result i32)
-   local.get $10
-  else   
-   local.get $2
-   local.get $6
-   i32.eq
-  end
-  local.tee $10
-  if (result i32)
-   local.get $10
-  else   
-   local.get $2
-   local.get $8
-   i32.eq
-  end
-  i32.const 0
-  i32.ne
+  local.get $1
+  local.get $7
+  i32.eq
+  i32.or
+  local.get $2
+  local.get $6
+  i32.eq
+  i32.or
+  local.get $2
+  local.get $8
+  i32.eq
+  i32.or
   local.set $10
   block $break|0
    local.get $5
@@ -3941,32 +3918,18 @@
   local.get $1
   local.get $6
   i32.eq
-  local.tee $11
-  if (result i32)
-   local.get $11
-  else   
-   local.get $1
-   local.get $8
-   i32.eq
-  end
-  local.tee $11
-  if (result i32)
-   local.get $11
-  else   
-   local.get $2
-   local.get $7
-   i32.eq
-  end
-  local.tee $11
-  if (result i32)
-   local.get $11
-  else   
-   local.get $2
-   local.get $9
-   i32.eq
-  end
-  i32.const 0
-  i32.ne
+  local.get $1
+  local.get $8
+  i32.eq
+  i32.or
+  local.get $2
+  local.get $7
+  i32.eq
+  i32.or
+  local.get $2
+  local.get $9
+  i32.eq
+  i32.or
   local.set $11
   f64.const 0
   local.set $12
@@ -4002,13 +3965,10 @@
        local.get $18
        local.get $1
        i32.eq
-       if (result i32)
-        local.get $19
-        local.get $2
-        i32.eq
-       else        
-        i32.const 0
-       end
+       local.get $19
+       local.get $2
+       i32.eq
+       i32.and
        if
         br $continue|1
        end
