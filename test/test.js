@@ -251,7 +251,6 @@ function diffTest(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
         const ptr2 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, img2.data));
         const diffPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, diffPNG.data));
 
-        const start = performance.now();
         const mismatch = wasmModule.pixelmatch(
             ptr1,
             ptr2,
@@ -269,10 +268,9 @@ function diffTest(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
             options.diffColor && options.diffColor[2]
         );
         const mismatch2 = wasmModule.pixelmatch(ptr1, ptr2, null, width, height, options.threshold, options.includeAA, options.alpha, options.aaColor, options.diffColor);
+        
+        // Reassign data back to the diff PNG
         diffPNG.data = Buffer.from(new Uint8Array(wasmModule.__getArray(diffPtr)));
-        const end = performance.now();
-
-        console.log("\n", imgPath1, imgPath2, end - start, "ms \n");
 
         const expectedDiff = readImage(diffPath);
 
