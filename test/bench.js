@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const loader = require("assemblyscript/lib/loader");
 
-const buf = fs.readFileSync('./build/untouched.wasm');
+const buf = fs.readFileSync('./build/optimized.wasm');
 const wasm = new WebAssembly.Module(new Uint8Array(buf));
 const wasmModule = loader.instantiate(wasm, { env: { abort: (err) => {
     console.error(err)
@@ -41,7 +41,7 @@ function diffBench(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
     const ptr1 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, img1.data));
     const ptr2 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, img2.data));
     const diffPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, diffPNG.data));
-    
+
     const mismatch = wasmModule.pixelmatch(
         ptr1,
         ptr2,
@@ -70,7 +70,7 @@ function diffBench(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
         options.aaColor,
         options.diffColor
     );
-    
+
     diffPNG.data = Buffer.from(new Uint8Array(wasmModule.__getArray(diffPtr)));
     const end = performance.now();
     total += end - start;
@@ -79,7 +79,6 @@ function diffBench(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
     wasmModule.__release(ptr1);
     wasmModule.__release(ptr2);
     wasmModule.__release(diffPtr);
-
 }
 
 const options = {
