@@ -14,8 +14,6 @@
  (type $FUNCSIG$iiiiii (func (param i32 i32 i32 i32 i32) (result i32)))
  (type $FUNCSIG$dddd (func (param f64 f64 f64) (result f64)))
  (type $FUNCSIG$ddd (func (param f64 f64) (result f64)))
- (type $FUNCSIG$viiiii (func (param i32 i32 i32 i32 i32)))
- (type $FUNCSIG$viidi (func (param i32 i32 f64 i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "\1e\00\00\00\01\00\00\00\01\00\00\00\1e\00\00\00~\00l\00i\00b\00/\00r\00t\00/\00t\00l\00s\00f\00.\00t\00s\00")
@@ -34,7 +32,6 @@
  (global $assembly/index/Uint8Array_ID i32 (i32.const 3))
  (global $~lib/rt/__rtti_base i32 (i32.const 256))
  (global $~lib/heap/__heap_base i32 (i32.const 292))
- (global $~lib/argc (mut i32) (i32.const 0))
  (export "memory" (memory $0))
  (export "__alloc" (func $~lib/rt/tlsf/__alloc))
  (export "__retain" (func $~lib/rt/pure/__retain))
@@ -43,16 +40,10 @@
  (export "__rtti_base" (global $~lib/rt/__rtti_base))
  (export "Uint8Array_ID" (global $assembly/index/Uint8Array_ID))
  (export "pixelmatch" (func $assembly/index/pixelmatch))
- (export "antialiased" (func $assembly/index/antialiased))
- (export "hasManySiblings" (func $assembly/index/hasManySiblings))
- (export "__setargc" (func $~lib/setargc))
- (export "colorDelta" (func $assembly/index/colorDelta|trampoline))
  (export "rgb2y" (func $assembly/index/rgb2y))
  (export "rgb2i" (func $assembly/index/rgb2i))
  (export "rgb2q" (func $assembly/index/rgb2q))
  (export "blend" (func $assembly/index/blend))
- (export "drawPixel" (func $assembly/index/drawPixel))
- (export "drawGrayPixel" (func $assembly/index/drawGrayPixel))
  (func $~lib/rt/tlsf/removeBlock (; 1 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
@@ -4703,148 +4694,7 @@
   f64.mul
   f64.add
  )
- (func $assembly/index/drawPixel (; 38 ;) (type $FUNCSIG$viiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32)
-  local.get $0
-  local.get $1
-  i32.add
-  local.get $2
-  i32.const 255
-  i32.and
-  local.get $3
-  i32.const 255
-  i32.and
-  i32.const 8
-  i32.shl
-  i32.or
-  local.get $4
-  i32.const 255
-  i32.and
-  i32.const 16
-  i32.shl
-  i32.or
-  i32.const -16777216
-  i32.or
-  i32.store
- )
- (func $assembly/index/drawGrayPixel (; 39 ;) (type $FUNCSIG$viidi) (param $0 i32) (param $1 i32) (param $2 f64) (param $3 i32)
-  (local $4 i32)
-  (local $5 i32)
-  (local $6 i32)
-  (local $7 i32)
-  (local $8 i32)
-  (local $9 f64)
-  (local $10 f64)
-  (local $11 f64)
-  (local $12 f64)
-  (local $13 i32)
-  (local $14 i32)
-  (local $15 i32)
-  (local $16 i32)
-  (local $17 i32)
-  (local $18 i32)
-  local.get $0
-  local.get $1
-  i32.add
-  i32.load
-  local.set $4
-  local.get $4
-  i32.const 0
-  i32.shr_u
-  i32.const 255
-  i32.and
-  local.set $5
-  local.get $4
-  i32.const 8
-  i32.shr_u
-  i32.const 255
-  i32.and
-  local.set $6
-  local.get $4
-  i32.const 16
-  i32.shr_u
-  i32.const 255
-  i32.and
-  local.set $7
-  local.get $4
-  i32.const 24
-  i32.shr_u
-  local.set $8
-  local.get $5
-  f64.convert_i32_u
-  local.set $11
-  local.get $6
-  f64.convert_i32_u
-  local.set $10
-  local.get $7
-  f64.convert_i32_u
-  local.set $9
-  local.get $11
-  f64.const 0.29889531
-  f64.mul
-  local.get $10
-  f64.const 0.58662247
-  f64.mul
-  f64.add
-  local.get $9
-  f64.const 0.11448223
-  f64.mul
-  f64.add
-  local.set $11
-  local.get $8
-  f64.convert_i32_u
-  local.get $2
-  f64.mul
-  f64.const 1
-  f64.const 255
-  f64.div
-  f64.mul
-  local.set $10
-  local.get $11
-  local.set $12
-  local.get $10
-  local.set $9
-  f64.const 255
-  local.get $12
-  f64.const 255
-  f64.sub
-  local.get $9
-  f64.mul
-  f64.add
-  i32.trunc_f64_u
-  local.set $13
-  local.get $3
-  local.set $18
-  local.get $1
-  local.set $17
-  local.get $13
-  local.set $16
-  local.get $13
-  local.set $15
-  local.get $13
-  local.set $14
-  local.get $18
-  local.get $17
-  i32.add
-  local.get $16
-  i32.const 255
-  i32.and
-  local.get $15
-  i32.const 255
-  i32.and
-  i32.const 8
-  i32.shl
-  i32.or
-  local.get $14
-  i32.const 255
-  i32.and
-  i32.const 16
-  i32.shl
-  i32.or
-  i32.const -16777216
-  i32.or
-  i32.store
- )
- (func $~lib/rt/pure/__visit (; 40 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/rt/pure/__visit (; 38 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
   local.get $0
@@ -4974,7 +4824,7 @@
    end
   end
  )
- (func $~lib/rt/__visit_members (; 41 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/rt/__visit_members (; 39 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   block $switch$1$default
    block $switch$1$case$4
@@ -4999,31 +4849,6 @@
   end
   unreachable
  )
- (func $null (; 42 ;) (type $FUNCSIG$v)
- )
- (func $assembly/index/colorDelta|trampoline (; 43 ;) (type $FUNCSIG$diiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result f64)
-  block $1of1
-   block $0of1
-    block $outOfRange
-     global.get $~lib/argc
-     i32.const 4
-     i32.sub
-     br_table $0of1 $1of1 $outOfRange
-    end
-    unreachable
-   end
-   i32.const 0
-   local.set $4
-  end
-  local.get $0
-  local.get $1
-  local.get $2
-  local.get $3
-  local.get $4
-  call $assembly/index/colorDelta
- )
- (func $~lib/setargc (; 44 ;) (type $FUNCSIG$vi) (param $0 i32)
-  local.get $0
-  global.set $~lib/argc
+ (func $null (; 40 ;) (type $FUNCSIG$v)
  )
 )

@@ -108,7 +108,7 @@ export function pixelmatch(
 
 // // check if a pixel is likely a part of anti-aliasing;
 // // based on "Anti-aliased Pixel and Intensity Slope Detector" paper by V. Vysniauskas, 2009
-export function antialiased(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32, img2Ptr: usize): bool {
+function antialiased(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32, img2Ptr: usize): bool {
 	let x0 = max(x1 - 1, 0);
 	let y0 = max(y1 - 1, 0);
 	let x2 = min(x1 + 1, width - 1);
@@ -170,7 +170,7 @@ export function antialiased(imgPtr: usize, x1: i32, y1: i32, width: i32, height:
 }
 
 // // check if a pixel has 3+ adjacent pixels of the same color.
-export function hasManySiblings(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32): bool {
+function hasManySiblings(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32): bool {
 	let x0 = max(x1 - 1, 0);
 	let y0 = max(y1 - 1, 0);
 	let x2 = min(x1 + 1, width - 1);
@@ -194,8 +194,7 @@ export function hasManySiblings(imgPtr: usize, x1: i32, y1: i32, width: i32, hei
 
 // // calculate color difference according to the paper "Measuring perceived color difference
 // // using YIQ NTSC transmission color space in mobile applications" by Y. Kotsarenko and F. Ramos
-
-export function colorDelta(img1Ptr: usize, img2Ptr: usize, k: i32, m: i32, yOnly: bool = false): f64 {
+function colorDelta(img1Ptr: usize, img2Ptr: usize, k: i32, m: i32, yOnly: bool = false): f64 {
   let rgba1 = load<u32>(img1Ptr + k as usize);
   let rgba2 = load<u32>(img2Ptr + m as usize);
 
@@ -239,34 +238,40 @@ export function colorDelta(img1Ptr: usize, img2Ptr: usize, k: i32, m: i32, yOnly
 	return 0.5053 * y * y + 0.299 * i * i + 0.1957 * q * q;
 }
 
+// @ts-ignore: decorator
 @inline
 export function rgb2y(r: f64, g: f64, b: f64): f64 {
 	return r * 0.29889531 + g * 0.58662247 + b * 0.11448223;
 }
 
+// @ts-ignore: decorator
 @inline
 export function rgb2i(r: f64, g: f64, b: f64): f64 {
 	return r * 0.59597799 - g * 0.27417610 - b * 0.32180189;
 }
 
+// @ts-ignore: decorator
 @inline
 export function rgb2q(r: f64, g: f64, b: f64): f64 {
 	return r * 0.21147017 - g * 0.52261711 + b * 0.31114694;
 }
 
 // // blend semi-transparent color with white
+// @ts-ignore: decorator
 @inline
 export function blend(c: f64, a: f64): f64 {
 	return 255 + (c - 255) * a;
 }
 
+// @ts-ignore: decorator
 @inline
-export function drawPixel(outputPtr: usize, pos: i32, r: u8, g: u8, b: u8): void {
+function drawPixel(outputPtr: usize, pos: i32, r: u8, g: u8, b: u8): void {
   store<u32>(outputPtr + pos as usize, (r as u32) | ((g as u32) << 8) | ((b as u32) << 16) | 0xFF000000);
 }
 
+// @ts-ignore: decorator
 @inline
-export function drawGrayPixel(imgPtr: usize, i: i32, alpha: f64, outputPtr: usize): void {
+function drawGrayPixel(imgPtr: usize, i: i32, alpha: f64, outputPtr: usize): void {
   let rgba = load<u32>(imgPtr + i as usize);
 
   let r = (rgba >> 0) & 0xFF;
