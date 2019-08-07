@@ -3682,6 +3682,7 @@
        i32.shl
        i32.add
        local.set $14
+       local.get $10
        local.get $0
        local.get $9
        i32.add
@@ -3691,12 +3692,8 @@
        i32.add
        i32.load
        i32.eq
-       if
-        local.get $10
-        i32.const 1
-        i32.add
-        local.set $10
-       end
+       i32.add
+       local.set $10
        local.get $10
        i32.const 2
        i32.gt_s
@@ -3978,10 +3975,10 @@
   (local $18 i32)
   (local $19 i32)
   (local $20 i32)
-  (local $21 f64)
+  (local $21 i32)
   (local $22 i32)
   (local $23 i32)
-  (local $24 i32)
+  (local $24 f64)
   (local $25 i32)
   (local $26 i32)
   (local $27 i32)
@@ -4100,40 +4097,73 @@
   i32.const 4
   i32.mul
   local.set $17
-  i32.const 1
+  local.get $14
+  local.set $20
+  local.get $15
+  local.set $19
+  local.get $17
   local.set $18
-  block $break|0
-   i32.const 0
-   local.set $19
-   loop $loop|0
-    local.get $19
-    local.get $17
-    i32.lt_s
-    i32.eqz
-    br_if $break|0
-    local.get $14
-    local.get $19
-    i32.add
-    i32.load
-    local.get $15
-    local.get $19
-    i32.add
-    i32.load
-    i32.ne
-    if
-     i32.const 0
-     local.set $18
-     br $break|0
-    end
-    local.get $19
-    i32.const 4
-    i32.add
-    local.set $19
-    br $loop|0
+  block $~lib/util/memory/memcmp|inlined.0 (result i32)
+   local.get $20
+   local.set $23
+   local.get $19
+   local.set $22
+   local.get $18
+   local.set $21
+   local.get $23
+   local.get $22
+   i32.eq
+   if
+    i32.const 0
+    br $~lib/util/memory/memcmp|inlined.0
    end
-   unreachable
+   block $break|0
+    loop $continue|0
+     local.get $21
+     i32.const 0
+     i32.ne
+     if (result i32)
+      local.get $23
+      i32.load8_u
+      local.get $22
+      i32.load8_u
+      i32.eq
+     else      
+      i32.const 0
+     end
+     i32.eqz
+     br_if $break|0
+     local.get $21
+     i32.const 1
+     i32.sub
+     local.set $21
+     local.get $23
+     i32.const 1
+     i32.add
+     local.set $23
+     local.get $22
+     i32.const 1
+     i32.add
+     local.set $22
+     br $continue|0
+    end
+    unreachable
+   end
+   local.get $21
+   if (result i32)
+    local.get $23
+    i32.load8_u
+    local.get $22
+    i32.load8_u
+    i32.sub
+   else    
+    i32.const 0
+   end
   end
-  local.get $18
+  i32.const 0
+  i32.eq
+  local.set $20
+  local.get $20
   if
    local.get $2
    if
@@ -4151,37 +4181,35 @@
       local.get $19
       local.set $22
       local.get $7
-      local.set $21
+      local.set $24
       local.get $16
-      local.set $20
+      local.set $21
       local.get $23
       local.get $22
       i32.add
       i32.load
-      local.set $24
-      local.get $24
+      local.set $18
+      local.get $18
       i32.const 0
       i32.shr_u
       i32.const 255
       i32.and
       local.set $25
-      local.get $24
+      local.get $18
       i32.const 8
       i32.shr_u
       i32.const 255
       i32.and
       local.set $26
-      local.get $24
+      local.get $18
       i32.const 16
       i32.shr_u
       i32.const 255
       i32.and
       local.set $27
-      local.get $24
+      local.get $18
       i32.const 24
       i32.shr_u
-      i32.const 255
-      i32.and
       local.set $28
       local.get $25
       f64.convert_i32_u
@@ -4206,7 +4234,7 @@
       local.set $31
       local.get $28
       f64.convert_i32_u
-      local.get $21
+      local.get $24
       f64.mul
       f64.const 1
       f64.const 255
@@ -4225,7 +4253,7 @@
       f64.mul
       f64.add
       local.set $32
-      local.get $20
+      local.get $21
       local.set $36
       local.get $22
       local.set $35
@@ -4434,15 +4462,15 @@
          local.get $16
          local.set $22
          local.get $25
-         local.set $20
+         local.set $21
          local.get $11
          local.set $29
          local.get $12
          local.set $31
          local.get $13
-         local.set $21
+         local.set $24
          local.get $22
-         local.get $20
+         local.get $21
          i32.add
          local.set $22
          local.get $22
@@ -4454,7 +4482,7 @@
          i32.trunc_f64_u
          i32.store8 offset=1
          local.get $22
-         local.get $21
+         local.get $24
          i32.trunc_f64_u
          i32.store8 offset=2
          local.get $22
@@ -4472,13 +4500,13 @@
         local.get $14
         local.set $35
         local.get $25
-        local.set $24
+        local.set $18
         local.get $7
         local.set $33
         local.get $16
         local.set $23
         local.get $35
-        local.get $24
+        local.get $18
         i32.add
         i32.load
         local.set $22
@@ -4487,7 +4515,7 @@
         i32.shr_u
         i32.const 255
         i32.and
-        local.set $20
+        local.set $21
         local.get $22
         i32.const 8
         i32.shr_u
@@ -4503,22 +4531,20 @@
         local.get $22
         i32.const 24
         i32.shr_u
-        i32.const 255
-        i32.and
         local.set $38
-        local.get $20
+        local.get $21
         f64.convert_i32_u
         local.set $31
         local.get $36
         f64.convert_i32_u
-        local.set $21
+        local.set $24
         local.get $37
         f64.convert_i32_u
         local.set $34
         local.get $31
         f64.const 0.29889531
         f64.mul
-        local.get $21
+        local.get $24
         f64.const 0.58662247
         f64.mul
         f64.add
@@ -4535,10 +4561,10 @@
         f64.const 255
         f64.div
         f64.mul
-        local.set $21
+        local.set $24
         local.get $31
         local.set $34
-        local.get $21
+        local.get $24
         local.set $29
         f64.const 255
         local.get $34
@@ -4550,7 +4576,7 @@
         local.set $34
         local.get $23
         local.set $42
-        local.get $24
+        local.get $18
         local.set $41
         local.get $34
         local.set $40
@@ -4714,8 +4740,6 @@
   local.get $4
   i32.const 24
   i32.shr_u
-  i32.const 255
-  i32.and
   local.set $8
   local.get $5
   f64.convert_i32_u

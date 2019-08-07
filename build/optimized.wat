@@ -2620,13 +2620,9 @@
        i32.add
        i32.load
        i32.eq
-       if
-        local.get $7
-        i32.const 1
-        i32.add
-        local.set $7
-       end
        local.get $7
+       i32.add
+       local.tee $7
        i32.const 2
        i32.gt_s
        if
@@ -2885,20 +2881,19 @@
   (local $19 i32)
   (local $20 i32)
   (local $21 i32)
-  (local $22 f64)
+  (local $22 i32)
   (local $23 i32)
   (local $24 f64)
-  (local $25 f64)
-  (local $26 f64)
   local.get $0
+  local.tee $15
   i32.const 244
   i32.gt_u
   if
-   local.get $0
+   local.get $15
    i32.const 16
    i32.sub
-   local.tee $16
-   local.get $16
+   local.tee $0
+   local.get $0
    i32.load offset=4
    i32.const 1
    i32.add
@@ -2911,8 +2906,8 @@
    local.get $1
    i32.const 16
    i32.sub
-   local.tee $16
-   local.get $16
+   local.tee $0
+   local.get $0
    i32.load offset=4
    i32.const 1
    i32.add
@@ -2925,14 +2920,14 @@
    local.get $2
    i32.const 16
    i32.sub
-   local.tee $16
-   local.get $16
+   local.tee $0
+   local.get $0
    i32.load offset=4
    i32.const 1
    i32.add
    i32.store offset=4
   end
-  local.get $0
+  local.get $15
   i32.load offset=8
   local.get $1
   i32.load offset=8
@@ -2944,7 +2939,7 @@
    if (result i32)
     local.get $2
     i32.load offset=8
-    local.get $0
+    local.get $15
     i32.load offset=8
     i32.ne
    else    
@@ -2952,7 +2947,7 @@
    end
   end
   if
-   local.get $0
+   local.get $15
    call $~lib/rt/pure/__release
    local.get $1
    call $~lib/rt/pure/__release
@@ -2961,7 +2956,7 @@
    i32.const -1
    return
   end
-  local.get $0
+  local.get $15
   i32.load offset=8
   local.get $3
   local.get $4
@@ -2970,7 +2965,7 @@
   i32.shl
   i32.ne
   if
-   local.get $0
+   local.get $15
    call $~lib/rt/pure/__release
    local.get $1
    call $~lib/rt/pure/__release
@@ -2979,12 +2974,6 @@
    i32.const -2
    return
   end
-  local.get $0
-  i32.load offset=4
-  local.set $17
-  local.get $1
-  i32.load offset=4
-  local.set $19
   local.get $2
   i32.load offset=4
   local.set $20
@@ -2999,67 +2988,88 @@
   i32.const 0
   local.get $6
   select
-  local.set $23
+  local.set $22
   f64.const 0.1
   local.get $7
   local.get $7
   local.get $7
   f64.ne
   select
-  local.set $22
-  local.get $3
-  local.get $4
-  i32.mul
-  i32.const 2
-  i32.shl
-  local.set $6
-  i32.const 1
-  local.set $15
-  block $break|0
-   loop $loop|0
+  local.set $7
+  block $~lib/util/memory/memcmp|inlined.0 (result i32)
+   local.get $3
+   local.get $4
+   i32.mul
+   i32.const 2
+   i32.shl
+   local.tee $23
+   local.set $14
+   i32.const 0
+   local.get $15
+   i32.load offset=4
+   local.tee $18
+   local.tee $6
+   local.get $1
+   i32.load offset=4
+   local.tee $21
+   local.tee $17
+   i32.eq
+   br_if $~lib/util/memory/memcmp|inlined.0
+   drop
+   loop $continue|0
     local.get $14
-    local.get $6
-    i32.ge_s
-    br_if $break|0
-    local.get $14
-    local.get $17
-    i32.add
-    i32.load
-    local.get $14
-    local.get $19
-    i32.add
-    i32.load
-    i32.eq
+    if (result i32)
+     local.get $6
+     i32.load8_u
+     local.get $17
+     i32.load8_u
+     i32.eq
+    else     
+     i32.const 0
+    end
     if
      local.get $14
-     i32.const 4
-     i32.add
+     i32.const 1
+     i32.sub
      local.set $14
-     br $loop|0
+     local.get $6
+     i32.const 1
+     i32.add
+     local.set $6
+     local.get $17
+     i32.const 1
+     i32.add
+     local.set $17
+     br $continue|0
     end
    end
-   i32.const 0
-   local.set $15
+   local.get $14
+   if (result i32)
+    local.get $6
+    i32.load8_u
+    local.get $17
+    i32.load8_u
+    i32.sub
+   else    
+    i32.const 0
+   end
   end
-  local.get $15
+  i32.eqz
   if
    local.get $2
    if
-    block $break|1
-     i32.const 0
-     local.set $14
-     loop $loop|1
-      local.get $14
-      local.get $6
-      i32.ge_s
-      br_if $break|1
-      local.get $14
+    loop $loop|1
+     local.get $16
+     local.get $23
+     i32.lt_s
+     if
+      local.get $16
       local.get $20
       i32.add
-      local.tee $4
+      local.tee $0
       f64.const 255
-      local.get $14
-      local.get $17
+      local.get $16
+      local.get $18
       i32.add
       i32.load
       local.tee $3
@@ -3092,7 +3102,7 @@
       i32.const 24
       i32.shr_u
       f64.convert_i32_u
-      local.get $22
+      local.get $7
       f64.mul
       f64.const 0.00392156862745098
       f64.mul
@@ -3101,27 +3111,26 @@
       local.tee $5
       i32.trunc_f64_u
       i32.store8
-      local.get $4
+      local.get $0
       local.get $5
       i32.trunc_f64_u
       i32.store8 offset=1
-      local.get $4
+      local.get $0
       local.get $5
       i32.trunc_f64_u
       i32.store8 offset=2
-      local.get $4
+      local.get $0
       i32.const 255
       i32.store8 offset=3
-      local.get $14
+      local.get $16
       i32.const 4
       i32.add
-      local.set $14
+      local.set $16
       br $loop|1
      end
-     unreachable
     end
    end
-   local.get $0
+   local.get $15
    call $~lib/rt/pure/__release
    local.get $1
    call $~lib/rt/pure/__release
@@ -3136,74 +3145,72 @@
   local.get $5
   f64.mul
   local.set $24
-  i32.const 0
-  local.set $14
   f64.const 255
   local.get $8
   local.get $8
   local.get $8
-  f64.ne
-  select
-  local.set $25
-  f64.const 255
-  local.get $9
-  local.get $9
-  local.get $9
-  f64.ne
-  select
-  local.set $26
-  f64.const 0
-  local.get $10
-  local.get $10
-  local.get $10
-  f64.ne
-  select
-  local.set $9
-  f64.const 255
-  local.get $11
-  local.get $11
-  local.get $11
   f64.ne
   select
   local.set $8
+  f64.const 255
+  local.get $9
+  local.get $9
+  local.get $9
+  f64.ne
+  select
+  local.set $9
+  f64.const 0
+  local.get $10
+  local.get $10
+  local.get $10
+  f64.ne
+  select
+  local.set $10
+  f64.const 255
+  local.get $11
+  local.get $11
+  local.get $11
+  f64.ne
+  select
+  local.set $11
   f64.const 0
   local.get $12
   local.get $12
   local.get $12
   f64.ne
   select
-  local.set $7
+  local.set $12
   f64.const 255
   local.get $13
   local.get $13
   local.get $13
   f64.ne
   select
-  local.set $5
+  local.set $13
   loop $loop|2
-   local.get $18
+   local.get $19
    local.get $4
    i32.lt_s
    if
     local.get $3
-    local.get $18
+    local.get $19
     i32.mul
     i32.const 2
     i32.shl
-    local.set $16
+    local.set $17
     i32.const 0
-    local.set $15
+    local.set $14
     loop $loop|3
-     local.get $15
+     local.get $14
      local.get $3
      i32.lt_s
      if
-      local.get $17
-      local.get $19
-      local.get $15
+      local.get $18
+      local.get $21
+      local.get $14
       i32.const 2
       i32.shl
-      local.get $16
+      local.get $17
       i32.add
       local.tee $6
       local.get $6
@@ -3212,26 +3219,26 @@
       local.get $24
       f64.gt
       if
-       local.get $23
+       local.get $22
        if (result i32)
         i32.const 0
        else        
-        local.get $17
-        local.get $15
         local.get $18
+        local.get $14
+        local.get $19
         local.get $3
         local.get $4
-        local.get $19
+        local.get $21
         call $assembly/index/antialiased
         if (result i32)
          i32.const 1
         else         
+         local.get $21
+         local.get $14
          local.get $19
-         local.get $15
-         local.get $18
          local.get $3
          local.get $4
-         local.get $17
+         local.get $18
          call $assembly/index/antialiased
         end
        end
@@ -3241,19 +3248,19 @@
          local.get $6
          local.get $20
          i32.add
-         local.tee $6
-         local.get $25
+         local.tee $0
+         local.get $8
          i32.trunc_f64_u
          i32.store8
-         local.get $6
-         local.get $26
-         i32.trunc_f64_u
-         i32.store8 offset=1
-         local.get $6
+         local.get $0
          local.get $9
          i32.trunc_f64_u
+         i32.store8 offset=1
+         local.get $0
+         local.get $10
+         i32.trunc_f64_u
          i32.store8 offset=2
-         local.get $6
+         local.get $0
          i32.const 255
          i32.store8 offset=3
         end
@@ -3263,26 +3270,26 @@
          local.get $6
          local.get $20
          i32.add
-         local.tee $6
-         local.get $8
+         local.tee $0
+         local.get $11
          i32.trunc_f64_u
          i32.store8
-         local.get $6
-         local.get $7
+         local.get $0
+         local.get $12
          i32.trunc_f64_u
          i32.store8 offset=1
-         local.get $6
-         local.get $5
+         local.get $0
+         local.get $13
          i32.trunc_f64_u
          i32.store8 offset=2
-         local.get $6
+         local.get $0
          i32.const 255
          i32.store8 offset=3
         end
-        local.get $14
+        local.get $16
         i32.const 1
         i32.add
-        local.set $14
+        local.set $16
        end
       else       
        local.get $2
@@ -3290,10 +3297,10 @@
         local.get $6
         local.get $20
         i32.add
-        local.tee $21
+        local.tee $0
         f64.const 255
         local.get $6
-        local.get $17
+        local.get $18
         i32.add
         i32.load
         local.tee $6
@@ -3326,49 +3333,49 @@
         i32.const 24
         i32.shr_u
         f64.convert_i32_u
-        local.get $22
+        local.get $7
         f64.mul
         f64.const 0.00392156862745098
         f64.mul
         f64.mul
         f64.add
-        local.tee $10
+        local.tee $5
         i32.trunc_f64_u
         i32.store8
-        local.get $21
-        local.get $10
+        local.get $0
+        local.get $5
         i32.trunc_f64_u
         i32.store8 offset=1
-        local.get $21
-        local.get $10
+        local.get $0
+        local.get $5
         i32.trunc_f64_u
         i32.store8 offset=2
-        local.get $21
+        local.get $0
         i32.const 255
         i32.store8 offset=3
        end
       end
-      local.get $15
+      local.get $14
       i32.const 1
       i32.add
-      local.set $15
+      local.set $14
       br $loop|3
      end
     end
-    local.get $18
+    local.get $19
     i32.const 1
     i32.add
-    local.set $18
+    local.set $19
     br $loop|2
    end
   end
-  local.get $0
+  local.get $15
   call $~lib/rt/pure/__release
   local.get $1
   call $~lib/rt/pure/__release
   local.get $2
   call $~lib/rt/pure/__release
-  local.get $14
+  local.get $16
  )
  (func $assembly/index/rgb2y (; 29 ;) (type $FUNCSIG$dddd) (param $0 f64) (param $1 f64) (param $2 f64) (result f64)
   local.get $0
