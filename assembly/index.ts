@@ -59,13 +59,13 @@ export function pixelmatch(
 	let maxDelta = 35215.0 * threshold * threshold;
 	let diff = 0;
 
-	aaR = isNaN(aaR) ? 255.0 : aaR;
-	aaG = isNaN(aaG) ? 255.0 : aaG;
-	aaB = isNaN(aaB) ?   0.0 : aaB;
+	let aaRb: u8 = isNaN(aaR) ? 255 : aaR as u8;
+	let aaGb: u8 = isNaN(aaG) ? 255 : aaG as u8;
+	let aaBb: u8 = isNaN(aaB) ?   0 : aaB as u8;
 
-	diffR = isNaN(diffR) ? 255.0 : diffR;
-	diffG = isNaN(diffG) ?   0.0 : diffG;
-	diffB = isNaN(diffB) ? 255.0 : diffB;
+	let diffRb: u8 = isNaN(diffR) ? 255 : diffR as u8;
+	let diffGb: u8 = isNaN(diffG) ?   0 : diffG as u8;
+	let diffBb: u8 = isNaN(diffB) ? 255 : diffB as u8;
 
 	// compare each pixel of one image against the other one
 	for (let y = 0; y < height; y++) {
@@ -86,12 +86,12 @@ export function pixelmatch(
 				)) {
 					// // one of the pixels is anti-aliasing; draw as yellow and do not count as difference
 					if (output) {
-						drawPixel(outputPtr, pos, aaR, aaG, aaB);
+						drawPixel(outputPtr, pos, aaRb, aaGb, aaBb);
 					}
 				} else {
 					// found substantial difference not caused by anti-aliasing; draw it as red
 					if (output) {
-						drawPixel(outputPtr, pos, diffR, diffG, diffB);
+						drawPixel(outputPtr, pos, diffRb, diffGb, diffBb);
 					}
 					++diff;
 				}
@@ -262,13 +262,8 @@ export function blend(c: f64, a: f64): f64 {
 }
 
 @inline
-export function drawPixel(outputPtr: usize, pos: i32, r: f64, g: f64, b: f64): void {
-  // store<u32>(outputPtr + pos, (r as u32) | ((g as u32) << 8) | ((g as u32) << 16) | ((255 as u32) << 24));
-  outputPtr += pos;
-  store<u8>(outputPtr, r as u8, 0);
-  store<u8>(outputPtr, g as u8, 1);
-  store<u8>(outputPtr, b as u8, 2);
-  store<u8>(outputPtr, 255,     3);
+export function drawPixel(outputPtr: usize, pos: i32, r: u8, g: u8, b: u8): void {
+  store<u32>(outputPtr + pos, (r as u32) | ((g as u32) << 8) | ((b as u32) << 16) | 0xFF000000);
 }
 
 @inline
@@ -283,6 +278,6 @@ export function drawGrayPixel(imgPtr: usize, i: i32, alpha: f64, outputPtr: usiz
 	let c1 = rgb2y(r, g, b);
   let c2 = a * alpha * (1.0 / 255.0);
 
-	let val = blend(c1, c2);
+	let val = blend(c1, c2) as u8;
 	drawPixel(outputPtr, i, val, val, val);
 }
