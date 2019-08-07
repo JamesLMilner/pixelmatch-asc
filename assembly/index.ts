@@ -141,7 +141,6 @@ export function antialiased(imgPtr: usize, x1: i32, y1: i32, width: i32, height:
 				if (zeroes > 2) {
 					return false;
 				}
-
 			// remember the darkest pixel
 			} else if (delta < min) {
 				min = delta;
@@ -185,7 +184,7 @@ export function hasManySiblings(imgPtr: usize, x1: i32, y1: i32, width: i32, hei
 	  for (let x = x0; x <= x2; x++) {
 			if (i32(x === x1) & i32(y === y1)) continue;
 			let pos2 = stride + (x << 2);
-      zeroes += i32(load<u32>(imgPtr + pos) == load<u32>(imgPtr + pos2));
+      zeroes += i32(load<u32>(imgPtr + pos as usize) == load<u32>(imgPtr + pos2 as usize));
 			if (zeroes > 2) return true;
 		}
 	}
@@ -197,8 +196,8 @@ export function hasManySiblings(imgPtr: usize, x1: i32, y1: i32, width: i32, hei
 // // using YIQ NTSC transmission color space in mobile applications" by Y. Kotsarenko and F. Ramos
 
 export function colorDelta(img1Ptr: usize, img2Ptr: usize, k: i32, m: i32, yOnly: bool = false): f64 {
-  let rgba1 = load<u32>(img1Ptr + k);
-  let rgba2 = load<u32>(img2Ptr + m);
+  let rgba1 = load<u32>(img1Ptr + k as usize);
+  let rgba2 = load<u32>(img2Ptr + m as usize);
 
   let r1 = ((rgba1 >>  0) & 0xFF) as f64;
   let g1 = ((rgba1 >>  8) & 0xFF) as f64;
@@ -263,12 +262,12 @@ export function blend(c: f64, a: f64): f64 {
 
 @inline
 export function drawPixel(outputPtr: usize, pos: i32, r: u8, g: u8, b: u8): void {
-  store<u32>(outputPtr + pos, (r as u32) | ((g as u32) << 8) | ((b as u32) << 16) | 0xFF000000);
+  store<u32>(outputPtr + pos as usize, (r as u32) | ((g as u32) << 8) | ((b as u32) << 16) | 0xFF000000);
 }
 
 @inline
 export function drawGrayPixel(imgPtr: usize, i: i32, alpha: f64, outputPtr: usize): void {
-  let rgba = load<u32>(imgPtr + i);
+  let rgba = load<u32>(imgPtr + i as usize);
 
   let r = (rgba >> 0) & 0xFF;
   let g = (rgba >> 8) & 0xFF;
