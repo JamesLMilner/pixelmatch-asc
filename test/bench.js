@@ -39,7 +39,7 @@ function diffBench(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
       __retain,
       __release,
       __allocArray,
-      __getArray,
+      __getArrayView,
       Uint8Array_ID,
       pixelmatch
     } = wasmModule;
@@ -81,7 +81,7 @@ function diffBench(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
     const end = performance.now();
     total += end - start;
 
-    diffPNG.data = Buffer.from(new Uint8Array(__getArray(diffPtr)));
+    diffPNG.data = Buffer.from(__getArrayView(diffPtr));
     console.log("\n", imgPath1, imgPath2, end - start, "ms \n");
 
     __release(ptr1);

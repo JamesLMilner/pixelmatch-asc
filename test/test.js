@@ -270,7 +270,7 @@ function diffTest(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
         const mismatch2 = wasmModule.pixelmatch(ptr1, ptr2, null, width, height, options.threshold, options.includeAA, options.alpha, options.aaColor, options.diffColor);
 
         // Reassign data back to the diff PNG
-        diffPNG.data = Buffer.from(new Uint8Array(wasmModule.__getArray(diffPtr)));
+        diffPNG.data = Buffer.from(wasmModule.__getArrayView(diffPtr));
 
         const expectedDiff = readImage(diffPath);
 
