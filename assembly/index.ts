@@ -23,12 +23,12 @@ export function pixelmatch(
 	// No Errors: https://docs.assemblyscript.org/basics/limitations#exceptions
 
 	// Image sizes do not match
-	if (img1.length !== img2.length || (output !== null && output.length !== img1.length)) {
+	if (img1.length != img2.length || (output !== null && output.length != img1.length)) {
 		return -1;
 	}
 
 	// Image data size does not match width/height.
-	if (img1.length !== width * height * 4) {
+	if (img1.length != width * height * 4) {
 		return -2;
 	}
 
@@ -42,7 +42,7 @@ export function pixelmatch(
 
 	// check if images are identical
 	let len = width * height * 4;
-  let identical = memory.compare(img1Ptr, img2Ptr, len) === 0;
+  let identical = memory.compare(img1Ptr, img2Ptr, len) == 0;
 
 	// fast path if identical
 	if (identical) {
@@ -114,7 +114,7 @@ function antialiased(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32, i
 	let x2 = min(x1 + 1, width - 1);
 	let y2 = min(y1 + 1, height - 1);
 	let pos = (y1 * width + x1) * 4;
-	let zeroes = i32(x1 === x0) | i32(x1 === x2) | i32(y1 === y0) | i32(y1 === y2);
+	let zeroes = i32(x1 == x0) | i32(x1 == x2) | i32(y1 == y0) | i32(y1 == y2);
 
 	let min = 0.0;
 	let max = 0.0;
@@ -127,7 +127,7 @@ function antialiased(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32, i
 	// go through 8 adjacent pixels
 	for (let x = x0; x <= x2; x++) {
 		for (let y = y0; y <= y2; y++) {
-			if (i32(x === x1) & i32(y === y1)) {
+			if (i32(x == x1) & i32(y == y1)) {
 				continue;
 			}
 
@@ -157,7 +157,7 @@ function antialiased(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32, i
 	}
 
 	// if there are no both darker and brighter pixels among siblings, it's not anti-aliasing
-	if (i32(min === 0) | i32(max === 0)) {
+	if (i32(min == 0) | i32(max == 0)) {
 		return false;
 	}
 
@@ -176,13 +176,13 @@ function hasManySiblings(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i3
 	let x2 = min(x1 + 1, width - 1);
 	let y2 = min(y1 + 1, height - 1);
 	let pos = (y1 * width + x1) * 4;
-	let zeroes = i32(x1 === x0) | i32(x1 === x2) | i32(y1 === y0) | i32(y1 === y2);
+	let zeroes = i32(x1 == x0) | i32(x1 == x2) | i32(y1 == y0) | i32(y1 == y2);
 
 	// go through 8 adjacent pixels
   for (let y = y0; y <= y2; y++) {
     let stride = y * width << 2;
 	  for (let x = x0; x <= x2; x++) {
-			if (i32(x === x1) & i32(y === y1)) continue;
+			if (i32(x == x1) & i32(y == y1)) continue;
 			let pos2 = stride + (x << 2);
       zeroes += i32(load<u32>(imgPtr + pos as usize) == load<u32>(imgPtr + pos2 as usize));
 			if (zeroes > 2) return true;
@@ -208,7 +208,7 @@ function colorDelta(img1Ptr: usize, img2Ptr: usize, k: i32, m: i32, yOnly: bool 
   let b2 = ((rgba2 >> 16) & 0xFF) as f64;
   let a2 = ((rgba2 >> 24)       ) as f64;
 
-	if (i32(a1 === a2) & i32(r1 === r2) & i32(g1 === g2) & i32(b1 === b2)) {
+	if (i32(a1 == a2) & i32(r1 == r2) & i32(g1 == g2) & i32(b1 == b2)) {
 		return 0;
 	}
 
