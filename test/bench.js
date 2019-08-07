@@ -70,10 +70,10 @@ function diffBench(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
         options.aaColor,
         options.diffColor
     );
-
-    diffPNG.data = Buffer.from(new Uint8Array(wasmModule.__getArray(diffPtr)));
     const end = performance.now();
     total += end - start;
+
+    diffPNG.data = Buffer.from(new Uint8Array(wasmModule.__getArray(diffPtr)));
     console.log("\n", imgPath1, imgPath2, end - start, "ms \n");
 
     wasmModule.__release(ptr1);
