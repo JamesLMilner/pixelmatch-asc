@@ -23,8 +23,7 @@
  (data (i32.const 112) "\1e\00\00\00\01\00\00\00\01\00\00\00\1e\00\00\00~\00l\00i\00b\00/\00r\00t\00/\00p\00u\00r\00e\00.\00t\00s\00")
  (data (i32.const 160) "$\00\00\00\01\00\00\00\01\00\00\00$\00\00\00I\00n\00d\00e\00x\00 \00o\00u\00t\00 \00o\00f\00 \00r\00a\00n\00g\00e\00")
  (data (i32.const 216) "\14\00\00\00\01\00\00\00\01\00\00\00\14\00\00\00~\00l\00i\00b\00/\00r\00t\00.\00t\00s\00")
- (data (i32.const 256) "$\00\00\00\01\00\00\00\01\00\00\00$\00\00\00~\00l\00i\00b\00/\00t\00y\00p\00e\00d\00a\00r\00r\00a\00y\00.\00t\00s\00")
- (data (i32.const 312) "\04\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\001\00\00\00\02\00\00\00")
+ (data (i32.const 256) "\04\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\001\00\00\00\02\00\00\00")
  (table $0 1 funcref)
  (elem (i32.const 0) $null)
  (global $~lib/rt/tlsf/ROOT (mut i32) (i32.const 0))
@@ -33,8 +32,8 @@
  (global $~lib/rt/pure/ROOTS (mut i32) (i32.const 0))
  (global $~lib/ASC_SHRINK_LEVEL i32 (i32.const 0))
  (global $assembly/index/Uint8Array_ID i32 (i32.const 3))
- (global $~lib/rt/__rtti_base i32 (i32.const 312))
- (global $~lib/heap/__heap_base i32 (i32.const 348))
+ (global $~lib/rt/__rtti_base i32 (i32.const 256))
+ (global $~lib/heap/__heap_base i32 (i32.const 292))
  (global $~lib/argc (mut i32) (i32.const 0))
  (export "memory" (memory $0))
  (export "__alloc" (func $~lib/rt/tlsf/__alloc))
@@ -3237,48 +3236,9 @@
   local.get $0
   f64.ne
  )
- (func $~lib/typedarray/Uint8Array#__get (; 30 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
-  local.get $1
-  local.get $0
-  i32.load offset=8
-  i32.ge_u
-  if
-   i32.const 176
-   i32.const 272
-   i32.const 125
-   i32.const 44
-   call $~lib/builtins/abort
-   unreachable
-  end
-  local.get $0
-  i32.load offset=4
-  local.get $1
-  i32.add
-  i32.load8_u
- )
- (func $~lib/typedarray/Uint8Array#__set (; 31 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
-  local.get $1
-  local.get $0
-  i32.load offset=8
-  i32.ge_u
-  if
-   i32.const 176
-   i32.const 272
-   i32.const 131
-   i32.const 44
-   call $~lib/builtins/abort
-   unreachable
-  end
-  local.get $0
-  i32.load offset=4
-  local.get $1
-  i32.add
-  local.get $2
-  i32.store8
- )
- (func $assembly/index/colorDelta (; 32 ;) (type $FUNCSIG$diiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result f64)
-  (local $5 f64)
-  (local $6 f64)
+ (func $assembly/index/colorDelta (; 30 ;) (type $FUNCSIG$diiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result f64)
+  (local $5 i32)
+  (local $6 i32)
   (local $7 f64)
   (local $8 f64)
   (local $9 f64)
@@ -3290,331 +3250,315 @@
   (local $15 f64)
   (local $16 f64)
   (local $17 f64)
-  local.get $0
-  call $~lib/rt/pure/__retain
-  drop
-  local.get $1
-  call $~lib/rt/pure/__retain
-  drop
+  (local $18 f64)
+  (local $19 f64)
   local.get $0
   local.get $2
-  i32.const 0
   i32.add
-  call $~lib/typedarray/Uint8Array#__get
-  f64.convert_i32_u
+  i32.load
   local.set $5
-  local.get $0
-  local.get $2
-  i32.const 1
+  local.get $1
+  local.get $3
   i32.add
-  call $~lib/typedarray/Uint8Array#__get
-  f64.convert_i32_u
+  i32.load
   local.set $6
-  local.get $0
-  local.get $2
-  i32.const 2
-  i32.add
-  call $~lib/typedarray/Uint8Array#__get
+  local.get $5
+  i32.const 0
+  i32.shr_u
+  i32.const 255
+  i32.and
   f64.convert_i32_u
   local.set $7
-  local.get $0
-  local.get $2
-  i32.const 3
-  i32.add
-  call $~lib/typedarray/Uint8Array#__get
+  local.get $5
+  i32.const 8
+  i32.shr_u
+  i32.const 255
+  i32.and
   f64.convert_i32_u
   local.set $8
-  local.get $1
-  local.get $3
-  i32.const 0
-  i32.add
-  call $~lib/typedarray/Uint8Array#__get
+  local.get $5
+  i32.const 16
+  i32.shr_u
+  i32.const 255
+  i32.and
   f64.convert_i32_u
   local.set $9
-  local.get $1
-  local.get $3
-  i32.const 1
-  i32.add
-  call $~lib/typedarray/Uint8Array#__get
+  local.get $5
+  i32.const 24
+  i32.shr_u
   f64.convert_i32_u
   local.set $10
-  local.get $1
-  local.get $3
-  i32.const 2
-  i32.add
-  call $~lib/typedarray/Uint8Array#__get
+  local.get $6
+  i32.const 0
+  i32.shr_u
+  i32.const 255
+  i32.and
   f64.convert_i32_u
   local.set $11
-  local.get $1
-  local.get $3
-  i32.const 3
-  i32.add
-  call $~lib/typedarray/Uint8Array#__get
+  local.get $6
+  i32.const 8
+  i32.shr_u
+  i32.const 255
+  i32.and
   f64.convert_i32_u
   local.set $12
+  local.get $6
+  i32.const 16
+  i32.shr_u
+  i32.const 255
+  i32.and
+  f64.convert_i32_u
+  local.set $13
+  local.get $6
+  i32.const 24
+  i32.shr_u
+  f64.convert_i32_u
+  local.set $14
+  local.get $10
+  local.get $14
+  f64.eq
+  local.get $7
+  local.get $11
+  f64.eq
+  i32.and
   local.get $8
   local.get $12
   f64.eq
-  local.get $5
+  i32.and
   local.get $9
-  f64.eq
-  i32.and
-  local.get $6
-  local.get $10
-  f64.eq
-  i32.and
-  local.get $7
-  local.get $11
+  local.get $13
   f64.eq
   i32.and
   if
    f64.const 0
-   local.set $13
-   local.get $0
-   call $~lib/rt/pure/__release
-   local.get $1
-   call $~lib/rt/pure/__release
-   local.get $13
    return
   end
-  local.get $8
+  local.get $10
   f64.const 255
   f64.lt
   if
-   local.get $8
+   local.get $10
    f64.const 1
    f64.const 255
    f64.div
    f64.mul
-   local.set $8
-   local.get $5
-   local.set $14
-   local.get $8
-   local.set $13
-   f64.const 255
-   local.get $14
-   f64.const 255
-   f64.sub
-   local.get $13
-   f64.mul
-   f64.add
-   local.set $5
-   local.get $6
-   local.set $14
-   local.get $8
-   local.set $13
-   f64.const 255
-   local.get $14
-   f64.const 255
-   f64.sub
-   local.get $13
-   f64.mul
-   f64.add
-   local.set $6
+   local.set $10
    local.get $7
-   local.set $14
-   local.get $8
-   local.set $13
+   local.set $16
+   local.get $10
+   local.set $15
    f64.const 255
-   local.get $14
+   local.get $16
    f64.const 255
    f64.sub
-   local.get $13
+   local.get $15
    f64.mul
    f64.add
    local.set $7
+   local.get $8
+   local.set $16
+   local.get $10
+   local.set $15
+   f64.const 255
+   local.get $16
+   f64.const 255
+   f64.sub
+   local.get $15
+   f64.mul
+   f64.add
+   local.set $8
+   local.get $9
+   local.set $16
+   local.get $10
+   local.set $15
+   f64.const 255
+   local.get $16
+   f64.const 255
+   f64.sub
+   local.get $15
+   f64.mul
+   f64.add
+   local.set $9
   end
-  local.get $12
+  local.get $14
   f64.const 255
   f64.lt
   if
-   local.get $12
+   local.get $14
    f64.const 1
    f64.const 255
    f64.div
    f64.mul
-   local.set $12
-   local.get $9
    local.set $14
-   local.get $12
-   local.set $13
-   f64.const 255
-   local.get $14
-   f64.const 255
-   f64.sub
-   local.get $13
-   f64.mul
-   f64.add
-   local.set $9
-   local.get $10
-   local.set $14
-   local.get $12
-   local.set $13
-   f64.const 255
-   local.get $14
-   f64.const 255
-   f64.sub
-   local.get $13
-   f64.mul
-   f64.add
-   local.set $10
    local.get $11
-   local.set $14
-   local.get $12
-   local.set $13
-   f64.const 255
+   local.set $16
    local.get $14
+   local.set $15
+   f64.const 255
+   local.get $16
    f64.const 255
    f64.sub
-   local.get $13
+   local.get $15
    f64.mul
    f64.add
    local.set $11
+   local.get $12
+   local.set $16
+   local.get $14
+   local.set $15
+   f64.const 255
+   local.get $16
+   f64.const 255
+   f64.sub
+   local.get $15
+   f64.mul
+   f64.add
+   local.set $12
+   local.get $13
+   local.set $16
+   local.get $14
+   local.set $15
+   f64.const 255
+   local.get $16
+   f64.const 255
+   f64.sub
+   local.get $15
+   f64.mul
+   f64.add
+   local.set $13
   end
-  local.get $5
-  local.set $15
-  local.get $6
-  local.set $14
   local.get $7
-  local.set $13
-  local.get $15
+  local.set $17
+  local.get $8
+  local.set $16
+  local.get $9
+  local.set $15
+  local.get $17
   f64.const 0.29889531
   f64.mul
-  local.get $14
+  local.get $16
   f64.const 0.58662247
   f64.mul
   f64.add
-  local.get $13
+  local.get $15
   f64.const 0.11448223
   f64.mul
   f64.add
-  local.get $9
-  local.set $15
-  local.get $10
-  local.set $14
   local.get $11
-  local.set $13
-  local.get $15
+  local.set $17
+  local.get $12
+  local.set $16
+  local.get $13
+  local.set $15
+  local.get $17
   f64.const 0.29889531
   f64.mul
-  local.get $14
+  local.get $16
   f64.const 0.58662247
   f64.mul
   f64.add
-  local.get $13
+  local.get $15
   f64.const 0.11448223
   f64.mul
   f64.add
   f64.sub
-  local.set $15
+  local.set $17
   local.get $4
   if
-   local.get $15
-   local.set $14
-   local.get $0
-   call $~lib/rt/pure/__release
-   local.get $1
-   call $~lib/rt/pure/__release
-   local.get $14
+   local.get $17
    return
   end
-  local.get $5
-  local.set $16
-  local.get $6
-  local.set $14
   local.get $7
-  local.set $13
-  local.get $16
+  local.set $18
+  local.get $8
+  local.set $16
+  local.get $9
+  local.set $15
+  local.get $18
   f64.const 0.59597799
   f64.mul
-  local.get $14
+  local.get $16
   f64.const 0.2741761
   f64.mul
   f64.sub
-  local.get $13
+  local.get $15
   f64.const 0.32180189
   f64.mul
   f64.sub
-  local.get $9
-  local.set $16
-  local.get $10
-  local.set $14
   local.get $11
-  local.set $13
-  local.get $16
+  local.set $18
+  local.get $12
+  local.set $16
+  local.get $13
+  local.set $15
+  local.get $18
   f64.const 0.59597799
   f64.mul
-  local.get $14
+  local.get $16
   f64.const 0.2741761
   f64.mul
   f64.sub
-  local.get $13
+  local.get $15
   f64.const 0.32180189
   f64.mul
   f64.sub
   f64.sub
-  local.set $16
-  local.get $5
-  local.set $17
-  local.get $6
-  local.set $14
+  local.set $18
   local.get $7
-  local.set $13
-  local.get $17
-  f64.const 0.21147017
-  f64.mul
-  local.get $14
-  f64.const 0.52261711
-  f64.mul
-  f64.sub
-  local.get $13
-  f64.const 0.31114694
-  f64.mul
-  f64.add
+  local.set $19
+  local.get $8
+  local.set $16
   local.get $9
-  local.set $17
-  local.get $10
-  local.set $14
-  local.get $11
-  local.set $13
-  local.get $17
+  local.set $15
+  local.get $19
   f64.const 0.21147017
   f64.mul
-  local.get $14
+  local.get $16
   f64.const 0.52261711
   f64.mul
   f64.sub
+  local.get $15
+  f64.const 0.31114694
+  f64.mul
+  f64.add
+  local.get $11
+  local.set $19
+  local.get $12
+  local.set $16
   local.get $13
+  local.set $15
+  local.get $19
+  f64.const 0.21147017
+  f64.mul
+  local.get $16
+  f64.const 0.52261711
+  f64.mul
+  f64.sub
+  local.get $15
   f64.const 0.31114694
   f64.mul
   f64.add
   f64.sub
-  local.set $17
+  local.set $19
   f64.const 0.5053
-  local.get $15
+  local.get $17
   f64.mul
-  local.get $15
+  local.get $17
   f64.mul
   f64.const 0.299
-  local.get $16
+  local.get $18
   f64.mul
-  local.get $16
+  local.get $18
   f64.mul
   f64.add
   f64.const 0.1957
-  local.get $17
+  local.get $19
   f64.mul
-  local.get $17
+  local.get $19
   f64.mul
   f64.add
-  local.set $14
-  local.get $0
-  call $~lib/rt/pure/__release
-  local.get $1
-  call $~lib/rt/pure/__release
-  local.get $14
  )
- (func $assembly/index/hasManySiblings (; 33 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
+ (func $assembly/index/hasManySiblings (; 31 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
   (local $5 i32)
   (local $6 i32)
   (local $7 i32)
@@ -3625,10 +3569,6 @@
   (local $12 i32)
   (local $13 i32)
   (local $14 i32)
-  (local $15 i32)
-  local.get $0
-  call $~lib/rt/pure/__retain
-  drop
   local.get $1
   i32.const 1
   i32.sub
@@ -3744,60 +3684,13 @@
        local.set $14
        local.get $0
        local.get $9
-       i32.const 0
        i32.add
-       call $~lib/typedarray/Uint8Array#__get
+       i32.load
        local.get $0
        local.get $14
-       i32.const 0
        i32.add
-       call $~lib/typedarray/Uint8Array#__get
+       i32.load
        i32.eq
-       if (result i32)
-        local.get $0
-        local.get $9
-        i32.const 1
-        i32.add
-        call $~lib/typedarray/Uint8Array#__get
-        local.get $0
-        local.get $14
-        i32.const 1
-        i32.add
-        call $~lib/typedarray/Uint8Array#__get
-        i32.eq
-       else        
-        i32.const 0
-       end
-       if (result i32)
-        local.get $0
-        local.get $9
-        i32.const 2
-        i32.add
-        call $~lib/typedarray/Uint8Array#__get
-        local.get $0
-        local.get $14
-        i32.const 2
-        i32.add
-        call $~lib/typedarray/Uint8Array#__get
-        i32.eq
-       else        
-        i32.const 0
-       end
-       if (result i32)
-        local.get $0
-        local.get $9
-        i32.const 3
-        i32.add
-        call $~lib/typedarray/Uint8Array#__get
-        local.get $0
-        local.get $14
-        i32.const 3
-        i32.add
-        call $~lib/typedarray/Uint8Array#__get
-        i32.eq
-       else        
-        i32.const 0
-       end
        if
         local.get $10
         i32.const 1
@@ -3809,10 +3702,6 @@
        i32.gt_s
        if
         i32.const 1
-        local.set $15
-        local.get $0
-        call $~lib/rt/pure/__release
-        local.get $15
         return
        end
       end
@@ -3833,12 +3722,8 @@
    unreachable
   end
   i32.const 0
-  local.set $12
-  local.get $0
-  call $~lib/rt/pure/__release
-  local.get $12
  )
- (func $assembly/index/antialiased (; 34 ;) (type $FUNCSIG$iiiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (result i32)
+ (func $assembly/index/antialiased (; 32 ;) (type $FUNCSIG$iiiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (result i32)
   (local $6 i32)
   (local $7 i32)
   (local $8 i32)
@@ -3854,13 +3739,6 @@
   (local $18 i32)
   (local $19 i32)
   (local $20 f64)
-  (local $21 i32)
-  local.get $0
-  call $~lib/rt/pure/__retain
-  drop
-  local.get $5
-  call $~lib/rt/pure/__retain
-  drop
   local.get $1
   i32.const 1
   i32.sub
@@ -4000,12 +3878,6 @@
         i32.gt_s
         if
          i32.const 0
-         local.set $21
-         local.get $0
-         call $~lib/rt/pure/__release
-         local.get $5
-         call $~lib/rt/pure/__release
-         local.get $21
          return
         end
        else        
@@ -4059,12 +3931,6 @@
   i32.or
   if
    i32.const 0
-   local.set $18
-   local.get $0
-   call $~lib/rt/pure/__release
-   local.get $5
-   call $~lib/rt/pure/__release
-   local.get $18
    return
   end
   local.get $0
@@ -4103,38 +3969,37 @@
     i32.const 0
    end
   end
-  local.set $18
-  local.get $0
-  call $~lib/rt/pure/__release
-  local.get $5
-  call $~lib/rt/pure/__release
-  local.get $18
  )
- (func $assembly/index/pixelmatch (; 35 ;) (type $FUNCSIG$iiiiiididdddddd) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 f64) (param $6 i32) (param $7 f64) (param $8 f64) (param $9 f64) (param $10 f64) (param $11 f64) (param $12 f64) (param $13 f64) (result i32)
+ (func $assembly/index/pixelmatch (; 33 ;) (type $FUNCSIG$iiiiiididdddddd) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 f64) (param $6 i32) (param $7 f64) (param $8 f64) (param $9 f64) (param $10 f64) (param $11 f64) (param $12 f64) (param $13 f64) (result i32)
   (local $14 i32)
   (local $15 i32)
   (local $16 i32)
   (local $17 i32)
-  (local $18 f64)
+  (local $18 i32)
   (local $19 i32)
   (local $20 i32)
-  (local $21 i32)
+  (local $21 f64)
   (local $22 i32)
   (local $23 i32)
-  (local $24 f64)
-  (local $25 f64)
-  (local $26 f64)
-  (local $27 f64)
-  (local $28 f64)
+  (local $24 i32)
+  (local $25 i32)
+  (local $26 i32)
+  (local $27 i32)
+  (local $28 i32)
   (local $29 f64)
-  (local $30 i32)
-  (local $31 i32)
-  (local $32 i32)
-  (local $33 i32)
+  (local $30 f64)
+  (local $31 f64)
+  (local $32 f64)
+  (local $33 f64)
   (local $34 f64)
-  (local $35 f64)
+  (local $35 i32)
   (local $36 i32)
   (local $37 i32)
+  (local $38 i32)
+  (local $39 f64)
+  (local $40 f64)
+  (local $41 i32)
+  (local $42 i32)
   local.get $0
   call $~lib/rt/pure/__retain
   drop
@@ -4197,6 +4062,15 @@
    local.get $14
    return
   end
+  local.get $0
+  i32.load offset=4
+  local.set $14
+  local.get $1
+  i32.load offset=4
+  local.set $15
+  local.get $2
+  i32.load offset=4
+  local.set $16
   local.get $5
   call $~lib/number/isNaN<f64>
   if (result f64)
@@ -4223,195 +4097,181 @@
   local.get $3
   local.get $4
   i32.mul
-  local.set $14
+  i32.const 4
+  i32.mul
+  local.set $17
   i32.const 1
-  local.set $15
+  local.set $18
   block $break|0
    i32.const 0
-   local.set $16
+   local.set $19
    loop $loop|0
-    local.get $16
-    local.get $14
+    local.get $19
+    local.get $17
     i32.lt_s
     i32.eqz
     br_if $break|0
-    local.get $0
-    local.get $16
-    call $~lib/typedarray/Uint8Array#__get
-    local.get $1
-    local.get $16
-    call $~lib/typedarray/Uint8Array#__get
+    local.get $14
+    local.get $19
+    i32.add
+    i32.load
+    local.get $15
+    local.get $19
+    i32.add
+    i32.load
     i32.ne
     if
      i32.const 0
-     local.set $15
+     local.set $18
      br $break|0
     end
-    local.get $16
-    i32.const 1
+    local.get $19
+    i32.const 4
     i32.add
-    local.set $16
+    local.set $19
     br $loop|0
    end
    unreachable
   end
-  local.get $15
+  local.get $18
   if
    local.get $2
    if
     block $break|1
      i32.const 0
-     local.set $16
+     local.set $19
      loop $loop|1
-      local.get $16
-      local.get $14
+      local.get $19
+      local.get $17
       i32.lt_s
       i32.eqz
       br_if $break|1
-      local.get $0
-      call $~lib/rt/pure/__retain
-      local.set $20
-      local.get $16
-      i32.const 2
-      i32.shl
-      local.set $19
-      local.get $7
-      local.set $18
-      local.get $2
-      call $~lib/rt/pure/__retain
-      local.set $17
-      local.get $20
-      local.get $19
-      i32.const 0
-      i32.add
-      call $~lib/typedarray/Uint8Array#__get
-      local.set $21
-      local.get $20
-      local.get $19
-      i32.const 1
-      i32.add
-      call $~lib/typedarray/Uint8Array#__get
-      local.set $22
-      local.get $20
-      local.get $19
-      i32.const 2
-      i32.add
-      call $~lib/typedarray/Uint8Array#__get
+      local.get $14
       local.set $23
-      local.get $21
-      f64.convert_i32_u
-      local.set $26
-      local.get $22
-      f64.convert_i32_u
-      local.set $25
+      local.get $19
+      local.set $22
+      local.get $7
+      local.set $21
+      local.get $16
+      local.set $20
       local.get $23
-      f64.convert_i32_u
+      local.get $22
+      i32.add
+      i32.load
       local.set $24
+      local.get $24
+      i32.const 0
+      i32.shr_u
+      i32.const 255
+      i32.and
+      local.set $25
+      local.get $24
+      i32.const 8
+      i32.shr_u
+      i32.const 255
+      i32.and
+      local.set $26
+      local.get $24
+      i32.const 16
+      i32.shr_u
+      i32.const 255
+      i32.and
+      local.set $27
+      local.get $24
+      i32.const 24
+      i32.shr_u
+      i32.const 255
+      i32.and
+      local.set $28
+      local.get $25
+      f64.convert_i32_u
+      local.set $31
       local.get $26
+      f64.convert_i32_u
+      local.set $30
+      local.get $27
+      f64.convert_i32_u
+      local.set $29
+      local.get $31
       f64.const 0.29889531
       f64.mul
-      local.get $25
+      local.get $30
       f64.const 0.58662247
       f64.mul
       f64.add
-      local.get $24
+      local.get $29
       f64.const 0.11448223
       f64.mul
       f64.add
-      local.set $26
-      local.get $20
-      local.get $19
-      i32.const 3
-      i32.add
-      call $~lib/typedarray/Uint8Array#__get
+      local.set $31
+      local.get $28
       f64.convert_i32_u
-      local.get $18
+      local.get $21
       f64.mul
       f64.const 1
       f64.const 255
       f64.div
       f64.mul
-      local.set $25
-      local.get $26
-      local.set $27
-      local.get $25
-      local.set $24
+      local.set $30
+      local.get $31
+      local.set $32
+      local.get $30
+      local.set $29
       f64.const 255
-      local.get $27
+      local.get $32
       f64.const 255
       f64.sub
-      local.get $24
+      local.get $29
       f64.mul
       f64.add
-      local.set $27
-      local.get $17
-      call $~lib/rt/pure/__retain
-      local.set $31
-      local.get $19
-      local.set $30
-      local.get $27
+      local.set $32
+      local.get $20
+      local.set $36
+      local.get $22
+      local.set $35
+      local.get $32
+      local.set $34
+      local.get $32
+      local.set $33
+      local.get $32
       local.set $29
-      local.get $27
-      local.set $28
-      local.get $27
-      local.set $24
-      local.get $31
-      local.get $30
-      i32.const 0
+      local.get $36
+      local.get $35
       i32.add
+      local.set $36
+      local.get $36
+      local.get $34
+      i32.trunc_f64_u
+      i32.store8
+      local.get $36
+      local.get $33
+      i32.trunc_f64_u
+      i32.store8 offset=1
+      local.get $36
       local.get $29
       i32.trunc_f64_u
+      i32.store8 offset=2
+      local.get $36
       i32.const 255
-      i32.and
-      call $~lib/typedarray/Uint8Array#__set
-      local.get $31
-      local.get $30
-      i32.const 1
+      i32.store8 offset=3
+      local.get $19
+      i32.const 4
       i32.add
-      local.get $28
-      i32.trunc_f64_u
-      i32.const 255
-      i32.and
-      call $~lib/typedarray/Uint8Array#__set
-      local.get $31
-      local.get $30
-      i32.const 2
-      i32.add
-      local.get $24
-      i32.trunc_f64_u
-      i32.const 255
-      i32.and
-      call $~lib/typedarray/Uint8Array#__set
-      local.get $31
-      local.get $30
-      i32.const 3
-      i32.add
-      i32.const 255
-      call $~lib/typedarray/Uint8Array#__set
-      local.get $31
-      call $~lib/rt/pure/__release
-      local.get $17
-      call $~lib/rt/pure/__release
-      local.get $20
-      call $~lib/rt/pure/__release
-      local.get $16
-      i32.const 1
-      i32.add
-      local.set $16
+      local.set $19
       br $loop|1
      end
      unreachable
     end
    end
    i32.const 0
-   local.set $16
+   local.set $19
    local.get $0
    call $~lib/rt/pure/__release
    local.get $1
    call $~lib/rt/pure/__release
    local.get $2
    call $~lib/rt/pure/__release
-   local.get $16
+   local.get $19
    return
   end
   f64.const 35215
@@ -4419,9 +4279,9 @@
   f64.mul
   local.get $5
   f64.mul
-  local.set $27
+  local.set $32
   i32.const 0
-  local.set $16
+  local.set $19
   local.get $8
   call $~lib/number/isNaN<f64>
   if (result f64)
@@ -4472,64 +4332,64 @@
   local.set $13
   block $break|2
    i32.const 0
-   local.set $23
+   local.set $28
    loop $loop|2
-    local.get $23
+    local.get $28
     local.get $4
     i32.lt_s
     i32.eqz
     br_if $break|2
-    local.get $23
+    local.get $28
     local.get $3
     i32.mul
     i32.const 2
     i32.shl
-    local.set $22
+    local.set $27
     block $break|3
      i32.const 0
-     local.set $21
+     local.set $26
      loop $loop|3
-      local.get $21
+      local.get $26
       local.get $3
       i32.lt_s
       i32.eqz
       br_if $break|3
-      local.get $22
-      local.get $21
+      local.get $27
+      local.get $26
       i32.const 2
       i32.shl
       i32.add
-      local.set $20
-      local.get $0
-      local.get $1
-      local.get $20
-      local.get $20
+      local.set $25
+      local.get $14
+      local.get $15
+      local.get $25
+      local.get $25
       i32.const 0
       call $assembly/index/colorDelta
-      local.set $25
-      local.get $25
-      local.get $27
+      local.set $30
+      local.get $30
+      local.get $32
       f64.gt
       if
        local.get $6
        i32.eqz
        if (result i32)
-        local.get $0
-        local.get $21
-        local.get $23
+        local.get $14
+        local.get $26
+        local.get $28
         local.get $3
         local.get $4
-        local.get $1
+        local.get $15
         call $assembly/index/antialiased
         if (result i32)
          i32.const 1
         else         
-         local.get $1
-         local.get $21
-         local.get $23
+         local.get $15
+         local.get $26
+         local.get $28
          local.get $3
          local.get $4
-         local.get $0
+         local.get $14
          call $assembly/index/antialiased
         end
        else        
@@ -4538,264 +4398,214 @@
        if
         local.get $2
         if
-         local.get $2
-         call $~lib/rt/pure/__retain
-         local.set $31
-         local.get $20
-         local.set $30
+         local.get $16
+         local.set $36
+         local.get $25
+         local.set $35
          local.get $8
-         local.set $29
+         local.set $34
          local.get $9
-         local.set $28
+         local.set $33
          local.get $10
-         local.set $24
-         local.get $31
-         local.get $30
-         i32.const 0
+         local.set $29
+         local.get $36
+         local.get $35
          i32.add
+         local.set $36
+         local.get $36
+         local.get $34
+         i32.trunc_f64_u
+         i32.store8
+         local.get $36
+         local.get $33
+         i32.trunc_f64_u
+         i32.store8 offset=1
+         local.get $36
          local.get $29
          i32.trunc_f64_u
+         i32.store8 offset=2
+         local.get $36
          i32.const 255
-         i32.and
-         call $~lib/typedarray/Uint8Array#__set
-         local.get $31
-         local.get $30
-         i32.const 1
-         i32.add
-         local.get $28
-         i32.trunc_f64_u
-         i32.const 255
-         i32.and
-         call $~lib/typedarray/Uint8Array#__set
-         local.get $31
-         local.get $30
-         i32.const 2
-         i32.add
-         local.get $24
-         i32.trunc_f64_u
-         i32.const 255
-         i32.and
-         call $~lib/typedarray/Uint8Array#__set
-         local.get $31
-         local.get $30
-         i32.const 3
-         i32.add
-         i32.const 255
-         call $~lib/typedarray/Uint8Array#__set
-         local.get $31
-         call $~lib/rt/pure/__release
+         i32.store8 offset=3
         end
        else        
         local.get $2
         if
-         local.get $2
-         call $~lib/rt/pure/__retain
-         local.set $19
-         local.get $20
-         local.set $17
+         local.get $16
+         local.set $22
+         local.get $25
+         local.set $20
          local.get $11
-         local.set $24
+         local.set $29
          local.get $12
-         local.set $26
+         local.set $31
          local.get $13
-         local.set $18
-         local.get $19
-         local.get $17
-         i32.const 0
+         local.set $21
+         local.get $22
+         local.get $20
          i32.add
-         local.get $24
+         local.set $22
+         local.get $22
+         local.get $29
          i32.trunc_f64_u
-         i32.const 255
-         i32.and
-         call $~lib/typedarray/Uint8Array#__set
-         local.get $19
-         local.get $17
-         i32.const 1
-         i32.add
-         local.get $26
+         i32.store8
+         local.get $22
+         local.get $31
          i32.trunc_f64_u
-         i32.const 255
-         i32.and
-         call $~lib/typedarray/Uint8Array#__set
-         local.get $19
-         local.get $17
-         i32.const 2
-         i32.add
-         local.get $18
+         i32.store8 offset=1
+         local.get $22
+         local.get $21
          i32.trunc_f64_u
+         i32.store8 offset=2
+         local.get $22
          i32.const 255
-         i32.and
-         call $~lib/typedarray/Uint8Array#__set
-         local.get $19
-         local.get $17
-         i32.const 3
-         i32.add
-         i32.const 255
-         call $~lib/typedarray/Uint8Array#__set
-         local.get $19
-         call $~lib/rt/pure/__release
+         i32.store8 offset=3
         end
-        local.get $16
+        local.get $19
         i32.const 1
         i32.add
-        local.set $16
+        local.set $19
        end
       else       
        local.get $2
        if
-        local.get $0
-        call $~lib/rt/pure/__retain
-        local.set $17
-        local.get $20
-        local.set $31
+        local.get $14
+        local.set $35
+        local.get $25
+        local.set $24
         local.get $7
-        local.set $28
-        local.get $2
-        call $~lib/rt/pure/__retain
-        local.set $30
-        local.get $17
-        local.get $31
-        i32.const 0
-        i32.add
-        call $~lib/typedarray/Uint8Array#__get
-        local.set $19
-        local.get $17
-        local.get $31
-        i32.const 1
-        i32.add
-        call $~lib/typedarray/Uint8Array#__get
-        local.set $32
-        local.get $17
-        local.get $31
-        i32.const 2
-        i32.add
-        call $~lib/typedarray/Uint8Array#__get
         local.set $33
-        local.get $19
+        local.get $16
+        local.set $23
+        local.get $35
+        local.get $24
+        i32.add
+        i32.load
+        local.set $22
+        local.get $22
+        i32.const 0
+        i32.shr_u
+        i32.const 255
+        i32.and
+        local.set $20
+        local.get $22
+        i32.const 8
+        i32.shr_u
+        i32.const 255
+        i32.and
+        local.set $36
+        local.get $22
+        i32.const 16
+        i32.shr_u
+        i32.const 255
+        i32.and
+        local.set $37
+        local.get $22
+        i32.const 24
+        i32.shr_u
+        i32.const 255
+        i32.and
+        local.set $38
+        local.get $20
         f64.convert_i32_u
-        local.set $26
-        local.get $32
+        local.set $31
+        local.get $36
         f64.convert_i32_u
-        local.set $18
-        local.get $33
+        local.set $21
+        local.get $37
         f64.convert_i32_u
-        local.set $29
-        local.get $26
+        local.set $34
+        local.get $31
         f64.const 0.29889531
         f64.mul
-        local.get $18
+        local.get $21
         f64.const 0.58662247
         f64.mul
         f64.add
-        local.get $29
+        local.get $34
         f64.const 0.11448223
         f64.mul
         f64.add
-        local.set $26
-        local.get $17
-        local.get $31
-        i32.const 3
-        i32.add
-        call $~lib/typedarray/Uint8Array#__get
+        local.set $31
+        local.get $38
         f64.convert_i32_u
-        local.get $28
+        local.get $33
         f64.mul
         f64.const 1
         f64.const 255
         f64.div
         f64.mul
-        local.set $18
-        local.get $26
+        local.set $21
+        local.get $31
+        local.set $34
+        local.get $21
         local.set $29
-        local.get $18
-        local.set $24
         f64.const 255
-        local.get $29
+        local.get $34
         f64.const 255
         f64.sub
-        local.get $24
+        local.get $29
         f64.mul
         f64.add
-        local.set $29
-        local.get $30
-        call $~lib/rt/pure/__retain
-        local.set $37
-        local.get $31
-        local.set $36
-        local.get $29
-        local.set $35
-        local.get $29
         local.set $34
-        local.get $29
-        local.set $24
-        local.get $37
-        local.get $36
-        i32.const 0
-        i32.add
-        local.get $35
-        i32.trunc_f64_u
-        i32.const 255
-        i32.and
-        call $~lib/typedarray/Uint8Array#__set
-        local.get $37
-        local.get $36
-        i32.const 1
-        i32.add
-        local.get $34
-        i32.trunc_f64_u
-        i32.const 255
-        i32.and
-        call $~lib/typedarray/Uint8Array#__set
-        local.get $37
-        local.get $36
-        i32.const 2
-        i32.add
+        local.get $23
+        local.set $42
         local.get $24
-        i32.trunc_f64_u
-        i32.const 255
-        i32.and
-        call $~lib/typedarray/Uint8Array#__set
-        local.get $37
-        local.get $36
-        i32.const 3
+        local.set $41
+        local.get $34
+        local.set $40
+        local.get $34
+        local.set $39
+        local.get $34
+        local.set $29
+        local.get $42
+        local.get $41
         i32.add
+        local.set $42
+        local.get $42
+        local.get $40
+        i32.trunc_f64_u
+        i32.store8
+        local.get $42
+        local.get $39
+        i32.trunc_f64_u
+        i32.store8 offset=1
+        local.get $42
+        local.get $29
+        i32.trunc_f64_u
+        i32.store8 offset=2
+        local.get $42
         i32.const 255
-        call $~lib/typedarray/Uint8Array#__set
-        local.get $37
-        call $~lib/rt/pure/__release
-        local.get $30
-        call $~lib/rt/pure/__release
-        local.get $17
-        call $~lib/rt/pure/__release
+        i32.store8 offset=3
        end
       end
-      local.get $21
+      local.get $26
       i32.const 1
       i32.add
-      local.set $21
+      local.set $26
       br $loop|3
      end
      unreachable
     end
-    local.get $23
+    local.get $28
     i32.const 1
     i32.add
-    local.set $23
+    local.set $28
     br $loop|2
    end
    unreachable
   end
-  local.get $16
-  local.set $22
+  local.get $19
+  local.set $27
   local.get $0
   call $~lib/rt/pure/__release
   local.get $1
   call $~lib/rt/pure/__release
   local.get $2
   call $~lib/rt/pure/__release
-  local.get $22
+  local.get $27
  )
- (func $assembly/index/rgb2y (; 36 ;) (type $FUNCSIG$dddd) (param $0 f64) (param $1 f64) (param $2 f64) (result f64)
+ (func $assembly/index/rgb2y (; 34 ;) (type $FUNCSIG$dddd) (param $0 f64) (param $1 f64) (param $2 f64) (result f64)
   local.get $0
   f64.const 0.29889531
   f64.mul
@@ -4808,7 +4618,7 @@
   f64.mul
   f64.add
  )
- (func $assembly/index/rgb2i (; 37 ;) (type $FUNCSIG$dddd) (param $0 f64) (param $1 f64) (param $2 f64) (result f64)
+ (func $assembly/index/rgb2i (; 35 ;) (type $FUNCSIG$dddd) (param $0 f64) (param $1 f64) (param $2 f64) (result f64)
   local.get $0
   f64.const 0.59597799
   f64.mul
@@ -4821,7 +4631,7 @@
   f64.mul
   f64.sub
  )
- (func $assembly/index/rgb2q (; 38 ;) (type $FUNCSIG$dddd) (param $0 f64) (param $1 f64) (param $2 f64) (result f64)
+ (func $assembly/index/rgb2q (; 36 ;) (type $FUNCSIG$dddd) (param $0 f64) (param $1 f64) (param $2 f64) (result f64)
   local.get $0
   f64.const 0.21147017
   f64.mul
@@ -4834,7 +4644,7 @@
   f64.mul
   f64.add
  )
- (func $assembly/index/blend (; 39 ;) (type $FUNCSIG$ddd) (param $0 f64) (param $1 f64) (result f64)
+ (func $assembly/index/blend (; 37 ;) (type $FUNCSIG$ddd) (param $0 f64) (param $1 f64) (result f64)
   f64.const 255
   local.get $0
   f64.const 255
@@ -4843,108 +4653,92 @@
   f64.mul
   f64.add
  )
- (func $assembly/index/drawPixel (; 40 ;) (type $FUNCSIG$viiddd) (param $0 i32) (param $1 i32) (param $2 f64) (param $3 f64) (param $4 f64)
-  local.get $0
-  call $~lib/rt/pure/__retain
-  drop
+ (func $assembly/index/drawPixel (; 38 ;) (type $FUNCSIG$viiddd) (param $0 i32) (param $1 i32) (param $2 f64) (param $3 f64) (param $4 f64)
   local.get $0
   local.get $1
-  i32.const 0
   i32.add
+  local.set $0
+  local.get $0
   local.get $2
   i32.trunc_f64_u
-  i32.const 255
-  i32.and
-  call $~lib/typedarray/Uint8Array#__set
+  i32.store8
   local.get $0
-  local.get $1
-  i32.const 1
-  i32.add
   local.get $3
   i32.trunc_f64_u
-  i32.const 255
-  i32.and
-  call $~lib/typedarray/Uint8Array#__set
+  i32.store8 offset=1
   local.get $0
-  local.get $1
-  i32.const 2
-  i32.add
   local.get $4
   i32.trunc_f64_u
-  i32.const 255
-  i32.and
-  call $~lib/typedarray/Uint8Array#__set
+  i32.store8 offset=2
   local.get $0
-  local.get $1
-  i32.const 3
-  i32.add
   i32.const 255
-  call $~lib/typedarray/Uint8Array#__set
-  local.get $0
-  call $~lib/rt/pure/__release
+  i32.store8 offset=3
  )
- (func $assembly/index/drawGrayPixel (; 41 ;) (type $FUNCSIG$viidi) (param $0 i32) (param $1 i32) (param $2 f64) (param $3 i32)
+ (func $assembly/index/drawGrayPixel (; 39 ;) (type $FUNCSIG$viidi) (param $0 i32) (param $1 i32) (param $2 f64) (param $3 i32)
   (local $4 i32)
   (local $5 i32)
   (local $6 i32)
-  (local $7 f64)
-  (local $8 f64)
+  (local $7 i32)
+  (local $8 i32)
   (local $9 f64)
   (local $10 f64)
   (local $11 f64)
   (local $12 f64)
-  (local $13 i32)
-  (local $14 i32)
-  local.get $0
-  call $~lib/rt/pure/__retain
-  drop
-  local.get $3
-  call $~lib/rt/pure/__retain
-  drop
+  (local $13 f64)
+  (local $14 f64)
+  (local $15 i32)
+  (local $16 i32)
   local.get $0
   local.get $1
-  i32.const 0
   i32.add
-  call $~lib/typedarray/Uint8Array#__get
+  i32.load
   local.set $4
-  local.get $0
-  local.get $1
-  i32.const 1
-  i32.add
-  call $~lib/typedarray/Uint8Array#__get
+  local.get $4
+  i32.const 0
+  i32.shr_u
+  i32.const 255
+  i32.and
   local.set $5
-  local.get $0
-  local.get $1
-  i32.const 2
-  i32.add
-  call $~lib/typedarray/Uint8Array#__get
+  local.get $4
+  i32.const 8
+  i32.shr_u
+  i32.const 255
+  i32.and
   local.set $6
   local.get $4
-  f64.convert_i32_u
-  local.set $9
+  i32.const 16
+  i32.shr_u
+  i32.const 255
+  i32.and
+  local.set $7
+  local.get $4
+  i32.const 24
+  i32.shr_u
+  i32.const 255
+  i32.and
+  local.set $8
   local.get $5
   f64.convert_i32_u
-  local.set $8
+  local.set $11
   local.get $6
   f64.convert_i32_u
-  local.set $7
-  local.get $9
+  local.set $10
+  local.get $7
+  f64.convert_i32_u
+  local.set $9
+  local.get $11
   f64.const 0.29889531
   f64.mul
-  local.get $8
+  local.get $10
   f64.const 0.58662247
   f64.mul
   f64.add
-  local.get $7
+  local.get $9
   f64.const 0.11448223
   f64.mul
   f64.add
-  local.set $9
-  local.get $0
-  local.get $1
-  i32.const 3
-  i32.add
-  call $~lib/typedarray/Uint8Array#__get
+  local.set $11
+  local.get $8
   f64.convert_i32_u
   local.get $2
   f64.mul
@@ -4952,71 +4746,50 @@
   f64.const 255
   f64.div
   f64.mul
-  local.set $8
-  local.get $9
   local.set $10
-  local.get $8
-  local.set $7
-  f64.const 255
-  local.get $10
-  f64.const 255
-  f64.sub
-  local.get $7
-  f64.mul
-  f64.add
-  local.set $10
-  local.get $3
-  call $~lib/rt/pure/__retain
-  local.set $14
-  local.get $1
-  local.set $13
-  local.get $10
+  local.get $11
   local.set $12
   local.get $10
-  local.set $11
-  local.get $10
-  local.set $7
-  local.get $14
-  local.get $13
-  i32.const 0
-  i32.add
+  local.set $9
+  f64.const 255
   local.get $12
-  i32.trunc_f64_u
-  i32.const 255
-  i32.and
-  call $~lib/typedarray/Uint8Array#__set
-  local.get $14
-  local.get $13
-  i32.const 1
-  i32.add
-  local.get $11
-  i32.trunc_f64_u
-  i32.const 255
-  i32.and
-  call $~lib/typedarray/Uint8Array#__set
-  local.get $14
-  local.get $13
-  i32.const 2
-  i32.add
-  local.get $7
-  i32.trunc_f64_u
-  i32.const 255
-  i32.and
-  call $~lib/typedarray/Uint8Array#__set
-  local.get $14
-  local.get $13
-  i32.const 3
-  i32.add
-  i32.const 255
-  call $~lib/typedarray/Uint8Array#__set
-  local.get $14
-  call $~lib/rt/pure/__release
-  local.get $0
-  call $~lib/rt/pure/__release
+  f64.const 255
+  f64.sub
+  local.get $9
+  f64.mul
+  f64.add
+  local.set $12
   local.get $3
-  call $~lib/rt/pure/__release
+  local.set $16
+  local.get $1
+  local.set $15
+  local.get $12
+  local.set $14
+  local.get $12
+  local.set $13
+  local.get $12
+  local.set $9
+  local.get $16
+  local.get $15
+  i32.add
+  local.set $16
+  local.get $16
+  local.get $14
+  i32.trunc_f64_u
+  i32.store8
+  local.get $16
+  local.get $13
+  i32.trunc_f64_u
+  i32.store8 offset=1
+  local.get $16
+  local.get $9
+  i32.trunc_f64_u
+  i32.store8 offset=2
+  local.get $16
+  i32.const 255
+  i32.store8 offset=3
  )
- (func $~lib/rt/pure/__visit (; 42 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/rt/pure/__visit (; 40 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
   local.get $0
@@ -5146,7 +4919,7 @@
    end
   end
  )
- (func $~lib/rt/__visit_members (; 43 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/rt/__visit_members (; 41 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   block $switch$1$default
    block $switch$1$case$4
@@ -5171,9 +4944,9 @@
   end
   unreachable
  )
- (func $null (; 44 ;) (type $FUNCSIG$v)
+ (func $null (; 42 ;) (type $FUNCSIG$v)
  )
- (func $assembly/index/colorDelta|trampoline (; 45 ;) (type $FUNCSIG$diiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result f64)
+ (func $assembly/index/colorDelta|trampoline (; 43 ;) (type $FUNCSIG$diiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result f64)
   block $1of1
    block $0of1
     block $outOfRange
@@ -5194,7 +4967,7 @@
   local.get $4
   call $assembly/index/colorDelta
  )
- (func $~lib/setargc (; 46 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $~lib/setargc (; 44 ;) (type $FUNCSIG$vi) (param $0 i32)
   local.get $0
   global.set $~lib/argc
  )

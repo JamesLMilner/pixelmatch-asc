@@ -51,28 +51,28 @@ test('throws error if image sizes do not match width and height', (t) => {
 });
 
 
-test('draws a red pixel correctly', (t) => {
-    const oneByOne = new PNG({ height: 1, width: 1 });
-    const len = 1;
-    const drawArr = new Uint8Array(oneByOne.data, oneByOne.byteOffset, len);
-    t.equal(drawArr[0], 0);
-    t.equal(drawArr[1], 0);
-    t.equal(drawArr[2], 0);
-    t.equal(drawArr[3], 0);
-
-    const drawPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, drawArr));
-    const pos = 0;
-    wasmModule.drawPixel(drawPtr, pos, 255, 0, 0);
-
-
-    const resultArr = new Uint8Array(wasmModule.__getArray(drawPtr));
-    t.equal(resultArr[0], 255);
-    t.equal(resultArr[1], 0);
-    t.equal(resultArr[2], 0);
-    t.equal(resultArr[3], 255);
-
-    t.end();
-});
+// test('draws a red pixel correctly', (t) => {
+//     const oneByOne = new PNG({ height: 1, width: 1 });
+//     const len = 1;
+//     const drawArr = new Uint8Array(oneByOne.data, oneByOne.byteOffset, len);
+//     t.equal(drawArr[0], 0);
+//     t.equal(drawArr[1], 0);
+//     t.equal(drawArr[2], 0);
+//     t.equal(drawArr[3], 0);
+//
+//     const drawPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, drawArr));
+//     const pos = 0;
+//     wasmModule.drawPixel(drawPtr, pos, 255, 0, 0);
+//
+//
+//     const resultArr = new Uint8Array(wasmModule.__getArray(drawPtr));
+//     t.equal(resultArr[0], 255);
+//     t.equal(resultArr[1], 0);
+//     t.equal(resultArr[2], 0);
+//     t.equal(resultArr[3], 255);
+//
+//     t.end();
+// });
 
 test('blends a pixel correctly', (t) => {
 
@@ -103,128 +103,128 @@ test('rgb2q', (t) => {
     t.end();
 });
 
-test('drawGrayPixel', (t) => {
+// test('drawGrayPixel', (t) => {
+//
+//     const oneByOneInput = new PNG({ height: 1, width: 1 });
+//     const inputLen = 1;
+//     const imgArr = new Uint8Array(oneByOneInput.data, oneByOneInput.byteOffset, inputLen);
+//     imgArr[0] = 255;
+//     imgArr[1] = 26;
+//     imgArr[2] = 26;
+//     imgArr[3] = 255;
+//
+//     const imgPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, imgArr));
+//
+//     const oneByOneOutput = new PNG({ height: 1, width: 1 });
+//     const outputLen = 1;
+//     const outputArr = new Uint8Array(oneByOneOutput.data, oneByOneOutput.byteOffset, outputLen);
+//
+//     const outputPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, outputArr));
+//     const pos = 0;
+//
+//     wasmModule.drawGrayPixel(imgPtr, pos, 0.1, outputPtr);
+//
+//     // 255 26 26 0.1 'val' 238.944702625
+//
+//     const resultArr = new Uint8Array(wasmModule.__getArray(outputPtr));
+//     t.equal(resultArr[0], 238);
+//     t.equal(resultArr[1], 238);
+//     t.equal(resultArr[2], 238);
+//     t.equal(resultArr[3], 255);
+//
+//     t.end();
+//
+// });
 
-    const oneByOneInput = new PNG({ height: 1, width: 1 });
-    const inputLen = 1;
-    const imgArr = new Uint8Array(oneByOneInput.data, oneByOneInput.byteOffset, inputLen);
-    imgArr[0] = 255;
-    imgArr[1] = 26;
-    imgArr[2] = 26;
-    imgArr[3] = 255;
-
-    const imgPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, imgArr));
-
-    const oneByOneOutput = new PNG({ height: 1, width: 1 });
-    const outputLen = 1;
-    const outputArr = new Uint8Array(oneByOneOutput.data, oneByOneOutput.byteOffset, outputLen);
-
-    const outputPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, outputArr));
-    const pos = 0;
-
-    wasmModule.drawGrayPixel(imgPtr, pos, 0.1, outputPtr);
-
-    // 255 26 26 0.1 'val' 238.944702625
-
-    const resultArr = new Uint8Array(wasmModule.__getArray(outputPtr));
-    t.equal(resultArr[0], 238);
-    t.equal(resultArr[1], 238);
-    t.equal(resultArr[2], 238);
-    t.equal(resultArr[3], 255);
-
-    t.end();
-
-});
-
-test('colorDelta', (t) => {
-    const oneByOneRed = new PNG({ height: 1, width: 1 });
-    const redArr = new Uint8Array(oneByOneRed.data, oneByOneRed.redArr, 1);
-    redArr[0] = 255;
-    redArr[1] = 0;
-    redArr[2] = 0;
-    redArr[3] = 255;
-
-    const redPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, redArr));
-
-    const oneByOneGreen = new PNG({ height: 1, width: 1 });
-    const greenArr = new Uint8Array(oneByOneGreen.data, oneByOneGreen.byteOffset, 1);
-    greenArr[0] = 0;
-    greenArr[1] = 255;
-    greenArr[2] = 0;
-    greenArr[3] = 255;
-
-    const greenPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, greenArr));
-
-    const delta = wasmModule.colorDelta(redPtr, greenPtr, 0, 0, false);
-
-    t.equal(delta, 24298.8755187344, 'float comparison should be equal'); //24298.8755187344
-    t.end();
-});
+// test('colorDelta', (t) => {
+//     const oneByOneRed = new PNG({ height: 1, width: 1 });
+//     const redArr = new Uint8Array(oneByOneRed.data, oneByOneRed.redArr, 1);
+//     redArr[0] = 255;
+//     redArr[1] = 0;
+//     redArr[2] = 0;
+//     redArr[3] = 255;
+//
+//     const redPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, redArr));
+//
+//     const oneByOneGreen = new PNG({ height: 1, width: 1 });
+//     const greenArr = new Uint8Array(oneByOneGreen.data, oneByOneGreen.byteOffset, 1);
+//     greenArr[0] = 0;
+//     greenArr[1] = 255;
+//     greenArr[2] = 0;
+//     greenArr[3] = 255;
+//
+//     const greenPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, greenArr));
+//
+//     const delta = wasmModule.colorDelta(redPtr, greenPtr, 0, 0, false);
+//
+//     t.equal(delta, 24298.8755187344, 'float comparison should be equal'); //24298.8755187344
+//     t.end();
+// });
 
 
-test('hasManySiblings', (t) => {
+// test('hasManySiblings', (t) => {
+//
+//     const oneByOneRed = new PNG({ height: 3, width: 3 });
+//     const redArr = new Uint8Array(oneByOneRed.data, oneByOneRed.redArr, 1);
+//     for (var i = 0; i < redArr.length; i+= 4) {
+//         redArr[i] = 255;
+//         redArr[i + 1] = 0;
+//         redArr[i + 2] = 0;
+//         redArr[i + 3] = 255;
+//     }
+//
+//     const redPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, redArr));
+//
+//     const mixedArr = new Uint8Array(oneByOneRed.data, oneByOneRed.redArr, 1);
+//     for (var i = 0; i < mixedArr.length; i+= 4) {
+//         mixedArr[i + 0] = i !== 16 ? 255 : 0;
+//         mixedArr[i + 1] = i !== 16 ? 0 : 255;
+//         mixedArr[i + 2] = 0;
+//         mixedArr[i + 3] = 255;
+//     }
+//
+//     const mixedPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, mixedArr));
+//     const siblings = Boolean(wasmModule.hasManySiblings(redPtr, 1, 1, 3, 3, false));
+//     const noSiblings = Boolean(wasmModule.hasManySiblings(mixedPtr, 1, 1, 3, 3, false));
+//
+//     t.ok(siblings, 'should many siblings');
+//     t.notOk(noSiblings, 'should not many siblings');
+//     t.end();
+//
+// });
 
-    const oneByOneRed = new PNG({ height: 3, width: 3 });
-    const redArr = new Uint8Array(oneByOneRed.data, oneByOneRed.redArr, 1);
-    for (var i = 0; i < redArr.length; i+= 4) {
-        redArr[i] = 255;
-        redArr[i + 1] = 0;
-        redArr[i + 2] = 0;
-        redArr[i + 3] = 255;
-    }
-
-    const redPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, redArr));
-
-    const mixedArr = new Uint8Array(oneByOneRed.data, oneByOneRed.redArr, 1);
-    for (var i = 0; i < mixedArr.length; i+= 4) {
-        mixedArr[i + 0] = i !== 16 ? 255 : 0;
-        mixedArr[i + 1] = i !== 16 ? 0 : 255;
-        mixedArr[i + 2] = 0;
-        mixedArr[i + 3] = 255;
-    }
-
-    const mixedPtr = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, mixedArr));
-    const siblings = Boolean(wasmModule.hasManySiblings(redPtr, 1, 1, 3, 3, false));
-    const noSiblings = Boolean(wasmModule.hasManySiblings(mixedPtr, 1, 1, 3, 3, false));
-
-    t.ok(siblings, 'should many siblings');
-    t.notOk(noSiblings, 'should not many siblings');
-    t.end();
-
-});
-
-test('antialiased', (t) => {
-
-    const img1 = readImage('1a');
-    const img2 = readImage('1b');
-    const {width, height} = img1;
-    const len = width * height;
-
-    const diffPNG = new PNG({width, height});
-    const img1Arr = new Uint8Array(img1.data, img1.byteOffset, len);
-    const img2Arr = new Uint8Array(img2.data, img2.byteOffset, len);
-
-    const ptr1 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, img1Arr));
-    const ptr2 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, img2Arr));
-
-    let antialiasedPixels = 0;
-
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-
-            if (
-                wasmModule.antialiased(ptr1, x, y, width, height, ptr2) ||
-                wasmModule.antialiased(ptr2, x, y, width, height, ptr1)
-            ) {
-                antialiasedPixels++;
-            }
-
-        }
-    }
-
-    t.equal(antialiasedPixels, 2807);
-    t.end();
-});
+// test('antialiased', (t) => {
+//
+//     const img1 = readImage('1a');
+//     const img2 = readImage('1b');
+//     const {width, height} = img1;
+//     const len = width * height;
+//
+//     const diffPNG = new PNG({width, height});
+//     const img1Arr = new Uint8Array(img1.data, img1.byteOffset, len);
+//     const img2Arr = new Uint8Array(img2.data, img2.byteOffset, len);
+//
+//     const ptr1 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, img1Arr));
+//     const ptr2 = wasmModule.__retain(wasmModule.__allocArray(wasmModule.Uint8Array_ID, img2Arr));
+//
+//     let antialiasedPixels = 0;
+//
+//     for (let y = 0; y < height; y++) {
+//         for (let x = 0; x < width; x++) {
+//
+//             if (
+//                 wasmModule.antialiased(ptr1, x, y, width, height, ptr2) ||
+//                 wasmModule.antialiased(ptr2, x, y, width, height, ptr1)
+//             ) {
+//                 antialiasedPixels++;
+//             }
+//
+//         }
+//     }
+//
+//     t.equal(antialiasedPixels, 2807);
+//     t.end();
+// });
 
 
 function diffTest(imgPath1, imgPath2, diffPath, options, expectedMismatch) {

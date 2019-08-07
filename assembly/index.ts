@@ -32,16 +32,20 @@ export function pixelmatch(
 		return -2;
 	}
 
+  let img1Ptr = img1.dataStart;
+  let img2Ptr = img2.dataStart;
+  let outputPtr = output.dataStart;
+
 	threshold = isNaN(threshold) ? 0.1 : threshold;
 	includeAA = includeAA || false;
 	alpha     = isNaN(alpha) ? 0.1 : alpha;
 
 	// check if images are identical
-	let len = width * height;
+	let len = width * height * 4;
 	let identical = true;
 
-	for (let i = 0; i < len; i++) {
-		if (unchecked(img1[i]) !== unchecked(img2[i])) {
+	for (let i = 0; i < len; i += 4) {
+		if (load<u32>(img1Ptr + i) !== load<u32>(img2Ptr + i)) {
 			identical = false;
 			break;
 		}
@@ -50,8 +54,8 @@ export function pixelmatch(
 	// fast path if identical
 	if (identical) {
 		if (output) {
-			for (let i = 0; i < len; i++) {
-				drawGrayPixel(img1, i << 2, alpha, output);
+			for (let i = 0; i < len; i += 4) {
+				drawGrayPixel(img1Ptr, i, alpha, outputPtr);
 			}
 		}
 		return 0;
@@ -78,29 +82,29 @@ export function pixelmatch(
 			let pos = stride + (x << 2);
 
 			// squared YUV distance between colors at this pixel position
-			let delta = colorDelta(img1, img2, pos, pos);
+			let delta = colorDelta(img1Ptr, img2Ptr, pos, pos);
 
 			// the color difference is above the threshold
 			if (delta > maxDelta) {
 				// check it's a real rendering difference or just anti-aliasing
 				if (!includeAA && (
-					antialiased(img1, x, y, width, height, img2) ||
-					antialiased(img2, x, y, width, height, img1)
+					antialiased(img1Ptr, x, y, width, height, img2Ptr) ||
+					antialiased(img2Ptr, x, y, width, height, img1Ptr)
 				)) {
 					// // one of the pixels is anti-aliasing; draw as yellow and do not count as difference
 					if (output) {
-						drawPixel(output, pos, aaR, aaG, aaB);
+						drawPixel(outputPtr, pos, aaR, aaG, aaB);
 					}
 				} else {
 					// found substantial difference not caused by anti-aliasing; draw it as red
 					if (output) {
-						drawPixel(output, pos, diffR, diffG, diffB);
+						drawPixel(outputPtr, pos, diffR, diffG, diffB);
 					}
 					++diff;
 				}
 			} else if (output) {
 				// pixels are similar; draw background as grayscale image blended with white
-				drawGrayPixel(img1, pos, alpha, output);
+				drawGrayPixel(img1Ptr, pos, alpha, outputPtr);
 			}
 		}
 	}
@@ -111,7 +115,7 @@ export function pixelmatch(
 
 // // check if a pixel is likely a part of anti-aliasing;
 // // based on "Anti-aliased Pixel and Intensity Slope Detector" paper by V. Vysniauskas, 2009
-export function antialiased(img: Uint8Array, x1: i32, y1: i32, width: i32, height: i32, img2: Uint8Array): bool {
+export function antialiased(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32, img2Ptr: usize): bool {
 	let x0 = max(x1 - 1, 0);
 	let y0 = max(y1 - 1, 0);
 	let x2 = min(x1 + 1, width - 1);
@@ -135,7 +139,7 @@ export function antialiased(img: Uint8Array, x1: i32, y1: i32, width: i32, heigh
 			}
 
 			// brightness delta between the center pixel and adjacent one
-			let delta = colorDelta(img, img, pos, (y * width + x) * 4, true);
+			let delta = colorDelta(imgPtr, imgPtr, pos, (y * width + x) * 4, true);
 
 			// count the number of equal, darker and brighter adjacent pixels
 			if (delta === 0) {
@@ -168,13 +172,13 @@ export function antialiased(img: Uint8Array, x1: i32, y1: i32, width: i32, heigh
 	// if either the darkest or the brightest pixel has 3+ equal siblings in both images
 	// (definitely not anti-aliased), this pixel is anti-aliased
 	return (
-    (hasManySiblings(img, minX, minY, width, height) && hasManySiblings(img2, minX, minY, width, height)) ||
-    (hasManySiblings(img, maxX, maxY, width, height) && hasManySiblings(img2, maxX, maxY, width, height))
+    (hasManySiblings(imgPtr, minX, minY, width, height) && hasManySiblings(img2Ptr, minX, minY, width, height)) ||
+    (hasManySiblings(imgPtr, maxX, maxY, width, height) && hasManySiblings(img2Ptr, maxX, maxY, width, height))
   );
 }
 
 // // check if a pixel has 3+ adjacent pixels of the same color.
-export function hasManySiblings(img: Uint8Array, x1: i32, y1: i32, width: i32, height: i32): bool {
+export function hasManySiblings(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32): bool {
 	let x0 = max(x1 - 1, 0);
 	let y0 = max(y1 - 1, 0);
 	let x2 = min(x1 + 1, width - 1);
@@ -189,11 +193,12 @@ export function hasManySiblings(img: Uint8Array, x1: i32, y1: i32, width: i32, h
 			if (i32(x === x1) & i32(y === y1)) continue;
 
 			let pos2 = stride + (x << 2);
-			if (unchecked(img[pos + 0] === img[pos2 + 0]) &&
-					unchecked(img[pos + 1] === img[pos2 + 1]) &&
-					unchecked(img[pos + 2] === img[pos2 + 2]) &&
-					unchecked(img[pos + 3] === img[pos2 + 3])) ++zeroes;
+			// if (unchecked(img[pos + 0] === img[pos2 + 0]) &&
+			// 		unchecked(img[pos + 1] === img[pos2 + 1]) &&
+			// 		unchecked(img[pos + 2] === img[pos2 + 2]) &&
+			// 		unchecked(img[pos + 3] === img[pos2 + 3])) ++zeroes;
 
+      if (load<u32>(imgPtr + pos) == load<u32>(imgPtr + pos2)) ++zeroes;
 			if (zeroes > 2) return true;
 		}
 	}
@@ -204,16 +209,29 @@ export function hasManySiblings(img: Uint8Array, x1: i32, y1: i32, width: i32, h
 // // calculate color difference according to the paper "Measuring perceived color difference
 // // using YIQ NTSC transmission color space in mobile applications" by Y. Kotsarenko and F. Ramos
 
-export function colorDelta(img1: Uint8Array, img2: Uint8Array, k: i32, m: i32, yOnly: bool = false): f64 {
-	let r1 = unchecked(img1[k + 0]) as f64;
-	let g1 = unchecked(img1[k + 1]) as f64;
-	let b1 = unchecked(img1[k + 2]) as f64;
-	let a1 = unchecked(img1[k + 3]) as f64;
+export function colorDelta(img1Ptr: usize, img2Ptr: usize, k: i32, m: i32, yOnly: bool = false): f64 {
+	// let r1 = unchecked(img1[k + 0]) as f64;
+	// let g1 = unchecked(img1[k + 1]) as f64;
+	// let b1 = unchecked(img1[k + 2]) as f64;
+	// let a1 = unchecked(img1[k + 3]) as f64;
+  //
+	// let r2 = unchecked(img2[m + 0]) as f64;
+	// let g2 = unchecked(img2[m + 1]) as f64;
+	// let b2 = unchecked(img2[m + 2]) as f64;
+	// let a2 = unchecked(img2[m + 3]) as f64;
 
-	let r2 = unchecked(img2[m + 0]) as f64;
-	let g2 = unchecked(img2[m + 1]) as f64;
-	let b2 = unchecked(img2[m + 2]) as f64;
-	let a2 = unchecked(img2[m + 3]) as f64;
+  let rgba1 = load<u32>(img1Ptr + k);
+  let rgba2 = load<u32>(img2Ptr + m);
+
+  let r1 = ((rgba1 >>  0) & 0xFF) as f64;
+  let g1 = ((rgba1 >>  8) & 0xFF) as f64;
+  let b1 = ((rgba1 >> 16) & 0xFF) as f64;
+  let a1 = ((rgba1 >> 24)       ) as f64;
+
+  let r2 = ((rgba2 >>  0) & 0xFF) as f64;
+  let g2 = ((rgba2 >>  8) & 0xFF) as f64;
+  let b2 = ((rgba2 >> 16) & 0xFF) as f64;
+  let a2 = ((rgba2 >> 24)       ) as f64;
 
 	if (i32(a1 === a2) & i32(r1 === r2) & i32(g1 === g2) & i32(b1 === b2)) {
 		return 0;
@@ -267,22 +285,35 @@ export function blend(c: f64, a: f64): f64 {
 }
 
 @inline
-export function drawPixel(output: Uint8Array, pos: i32, r: f64, g: f64, b: f64): void {
-	unchecked(output[pos + 0] = r as u8);
-	unchecked(output[pos + 1] = g as u8);
-	unchecked(output[pos + 2] = b as u8);
-	unchecked(output[pos + 3] = 255);
+export function drawPixel(outputPtr: usize, pos: i32, r: f64, g: f64, b: f64): void {
+	// unchecked(output[pos + 0] = r as u8);
+	// unchecked(output[pos + 1] = g as u8);
+	// unchecked(output[pos + 2] = b as u8);
+	// unchecked(output[pos + 3] = 255);
+  // store<u32>(outputPtr + pos, (r as u32) | ((g as u32) << 8) | ((g as u32) << 16) | ((255 as u32) << 24));
+  outputPtr += pos;
+  store<u8>(outputPtr, r as u8, 0);
+  store<u8>(outputPtr, g as u8, 1);
+  store<u8>(outputPtr, b as u8, 2);
+  store<u8>(outputPtr, 255, 3);
 }
 
 @inline
-export function drawGrayPixel(img: Uint8Array, i: i32, alpha: f64, output: Uint8Array): void {
-	let r = unchecked(img[i + 0]);
-	let g = unchecked(img[i + 1]);
-	let b = unchecked(img[i + 2]);
+export function drawGrayPixel(imgPtr: usize, i: i32, alpha: f64, outputPtr: usize): void {
+	// let r = unchecked(img[i + 0]);
+	// let g = unchecked(img[i + 1]);
+	// let b = unchecked(img[i + 2]);
+
+  let rgba = load<u32>(imgPtr + i);
+  let r = (rgba >>  0) & 0xFF;
+  let g = (rgba >>  8) & 0xFF;
+  let b = (rgba >> 16) & 0xFF;
+  let a = (rgba >> 24) & 0xFF;
 
 	let c1 = rgb2y(r, g, b);
-	let c2 = unchecked(img[i + 3]) * alpha * (1.0 / 255.0);
+	// let c2 = unchecked(img[i + 3]) * alpha * (1.0 / 255.0);
+  let c2 = a * alpha * (1.0 / 255.0);
 
 	let val = blend(c1, c2);
-	drawPixel(output, i, val, val, val);
+	drawPixel(outputPtr, i, val, val, val);
 }
