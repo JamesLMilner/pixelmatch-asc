@@ -65,7 +65,7 @@ export function pixelmatch(
 
 	let diffRb: u8 = isNaN(diffR) ? 255 : diffR as u8;
 	let diffGb: u8 = isNaN(diffG) ?   0 : diffG as u8;
-	let diffBb: u8 = isNaN(diffB) ? 255 : diffB as u8;
+	let diffBb: u8 = isNaN(diffB) ?   0 : diffB as u8;
 
 	// compare each pixel of one image against the other one
 	for (let y = 0; y < height; y++) {

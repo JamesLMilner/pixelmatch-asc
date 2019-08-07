@@ -4369,7 +4369,7 @@
   local.get $13
   call $~lib/number/isNaN<f64>
   if (result i32)
-   i32.const 255
+   i32.const 0
   else   
    local.get $13
    i32.trunc_f64_u
