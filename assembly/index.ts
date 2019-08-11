@@ -9,21 +9,23 @@ export function pixelmatch(
 	height: i32,
 
 	// Can't use interfaces to make an options object here: https://docs.assemblyscript.org/basics/limitations#oop
-	threshold: f64,   // matching threshold (0 to 1); smaller is more sensitive
-	includeAA: bool,  // whether to skip anti-aliasing detection
-	alpha: f64,       // opacity of original image in diff ouput
-	aaR: f64,         // r color of anti-aliased pixels in diff output
-	aaG: f64,         // g color of anti-aliased pixels in diff output
-	aaB: f64,         // b color of anti-aliased pixels in diff output
-	diffR: f64,       // r color of different pixels in diff output
-	diffG: f64,       // g color of different pixels in diff output
-	diffB: f64        // b color of different pixels in diff output
+	threshold: f64, // matching threshold (0 to 1); smaller is more sensitive
+	includeAA: bool, // whether to skip anti-aliasing detection
+	alpha: f64, // opacity of original image in diff ouput
+	aaR: f64, // r color of anti-aliased pixels in diff output
+	aaG: f64, // g color of anti-aliased pixels in diff output
+	aaB: f64, // b color of anti-aliased pixels in diff output
+	diffR: f64, // r color of different pixels in diff output
+	diffG: f64, // g color of different pixels in diff output
+	diffB: f64 // b color of different pixels in diff output
 ): i32 {
-
 	// No Errors: https://docs.assemblyscript.org/basics/limitations#exceptions
 
 	// Image sizes do not match
-	if (img1.length != img2.length || (output !== null && output.length != img1.length)) {
+	if (
+		img1.length != img2.length ||
+		(output !== null && output.length != img1.length)
+	) {
 		return -1;
 	}
 
@@ -32,17 +34,17 @@ export function pixelmatch(
 		return -2;
 	}
 
-  let img1Ptr = img1.dataStart;
-  let img2Ptr = img2.dataStart;
-  let outputPtr = output.dataStart;
+	let img1Ptr = img1.dataStart;
+	let img2Ptr = img2.dataStart;
+	let outputPtr = output.dataStart;
 
 	threshold = isNaN(threshold) ? 0.1 : threshold;
 	includeAA = includeAA || false;
-	alpha     = isNaN(alpha) ? 0.1 : alpha;
+	alpha = isNaN(alpha) ? 0.1 : alpha;
 
 	// check if images are identical
 	let len = width * height * 4;
-  let identical = memory.compare(img1Ptr, img2Ptr, len) == 0;
+	let identical = memory.compare(img1Ptr, img2Ptr, len) == 0;
 
 	// fast path if identical
 	if (identical) {
@@ -59,19 +61,18 @@ export function pixelmatch(
 	let maxDelta = 35215.0 * threshold * threshold;
 	let diff = 0;
 
-	let aaRb: u8 = isNaN(aaR) ? 255 : aaR as u8;
-	let aaGb: u8 = isNaN(aaG) ? 255 : aaG as u8;
-	let aaBb: u8 = isNaN(aaB) ?   0 : aaB as u8;
+	let aaRb: u8 = isNaN(aaR) ? 255 : (aaR as u8);
+	let aaGb: u8 = isNaN(aaG) ? 255 : (aaG as u8);
+	let aaBb: u8 = isNaN(aaB) ? 0 : (aaB as u8);
 
-	let diffRb: u8 = isNaN(diffR) ? 255 : diffR as u8;
-	let diffGb: u8 = isNaN(diffG) ?   0 : diffG as u8;
-	let diffBb: u8 = isNaN(diffB) ?   0 : diffB as u8;
+	let diffRb: u8 = isNaN(diffR) ? 255 : (diffR as u8);
+	let diffGb: u8 = isNaN(diffG) ? 0 : (diffG as u8);
+	let diffBb: u8 = isNaN(diffB) ? 0 : (diffB as u8);
 
 	// compare each pixel of one image against the other one
 	for (let y = 0; y < height; y++) {
-    let stride = y * width << 2;
+		let stride = (y * width) << 2;
 		for (let x = 0; x < width; x++) {
-
 			let pos = stride + (x << 2);
 
 			// squared YUV distance between colors at this pixel position
@@ -80,10 +81,11 @@ export function pixelmatch(
 			// the color difference is above the threshold
 			if (delta > maxDelta) {
 				// check it's a real rendering difference or just anti-aliasing
-				if (!includeAA && (
-					antialiased(img1Ptr, x, y, width, height, img2Ptr) ||
-					antialiased(img2Ptr, x, y, width, height, img1Ptr)
-				)) {
+				if (
+					!includeAA &&
+					(antialiased(img1Ptr, x, y, width, height, img2Ptr) ||
+						antialiased(img2Ptr, x, y, width, height, img1Ptr))
+				) {
 					// // one of the pixels is anti-aliasing; draw as yellow and do not count as difference
 					if (output) {
 						drawPixel(outputPtr, pos, aaRb, aaGb, aaBb);
@@ -108,7 +110,14 @@ export function pixelmatch(
 
 // // check if a pixel is likely a part of anti-aliasing;
 // // based on "Anti-aliased Pixel and Intensity Slope Detector" paper by V. Vysniauskas, 2009
-function antialiased(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32, img2Ptr: usize): bool {
+function antialiased(
+	imgPtr: usize,
+	x1: i32,
+	y1: i32,
+	width: i32,
+	height: i32,
+	img2Ptr: usize
+): bool {
 	let x0 = max(x1 - 1, 0);
 	let y0 = max(y1 - 1, 0);
 	let x2 = min(x1 + 1, width - 1);
@@ -141,13 +150,13 @@ function antialiased(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32, i
 				if (zeroes > 2) {
 					return false;
 				}
-			// remember the darkest pixel
+				// remember the darkest pixel
 			} else if (delta < min) {
 				min = delta;
 				minX = x;
 				minY = y;
 
-			// remember the brightest pixel
+				// remember the brightest pixel
 			} else if (delta > max) {
 				max = delta;
 				maxX = x;
@@ -164,13 +173,21 @@ function antialiased(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32, i
 	// if either the darkest or the brightest pixel has 3+ equal siblings in both images
 	// (definitely not anti-aliased), this pixel is anti-aliased
 	return (
-    (hasManySiblings(imgPtr, minX, minY, width, height) && hasManySiblings(img2Ptr, minX, minY, width, height)) ||
-    (hasManySiblings(imgPtr, maxX, maxY, width, height) && hasManySiblings(img2Ptr, maxX, maxY, width, height))
-  );
+		(hasManySiblings(imgPtr, minX, minY, width, height) &&
+			hasManySiblings(img2Ptr, minX, minY, width, height)) ||
+		(hasManySiblings(imgPtr, maxX, maxY, width, height) &&
+			hasManySiblings(img2Ptr, maxX, maxY, width, height))
+	);
 }
 
 // // check if a pixel has 3+ adjacent pixels of the same color.
-function hasManySiblings(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32): bool {
+function hasManySiblings(
+	imgPtr: usize,
+	x1: i32,
+	y1: i32,
+	width: i32,
+	height: i32
+): bool {
 	let x0 = max(x1 - 1, 0);
 	let y0 = max(y1 - 1, 0);
 	let x2 = min(x1 + 1, width - 1);
@@ -179,12 +196,15 @@ function hasManySiblings(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i3
 	let zeroes = i32(x1 == x0) | i32(x1 == x2) | i32(y1 == y0) | i32(y1 == y2);
 
 	// go through 8 adjacent pixels
-  for (let y = y0; y <= y2; y++) {
-    let stride = y * width << 2;
-	  for (let x = x0; x <= x2; x++) {
+	for (let y = y0; y <= y2; y++) {
+		let stride = (y * width) << 2;
+		for (let x = x0; x <= x2; x++) {
 			if (i32(x == x1) & i32(y == y1)) continue;
 			let pos2 = stride + (x << 2);
-      zeroes += i32(load<u32>(imgPtr + pos as usize) == load<u32>(imgPtr + pos2 as usize));
+			zeroes += i32(
+				load<u32>((imgPtr + pos) as usize) ==
+					load<u32>((imgPtr + pos2) as usize)
+			);
 			if (zeroes > 2) return true;
 		}
 	}
@@ -194,19 +214,25 @@ function hasManySiblings(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i3
 
 // // calculate color difference according to the paper "Measuring perceived color difference
 // // using YIQ NTSC transmission color space in mobile applications" by Y. Kotsarenko and F. Ramos
-function colorDelta(img1Ptr: usize, img2Ptr: usize, k: i32, m: i32, yOnly: bool = false): f64 {
-  let rgba1 = load<u32>(img1Ptr + k as usize);
-  let rgba2 = load<u32>(img2Ptr + m as usize);
+function colorDelta(
+	img1Ptr: usize,
+	img2Ptr: usize,
+	k: i32,
+	m: i32,
+	yOnly: bool = false
+): f64 {
+	let rgba1 = load<u32>((img1Ptr + k) as usize);
+	let rgba2 = load<u32>((img2Ptr + m) as usize);
 
-  let r1 = ((rgba1 >>  0) & 0xFF) as f64;
-  let g1 = ((rgba1 >>  8) & 0xFF) as f64;
-  let b1 = ((rgba1 >> 16) & 0xFF) as f64;
-  let a1 = ((rgba1 >> 24)       ) as f64;
+	let r1 = ((rgba1 >> 0) & 0xff) as f64;
+	let g1 = ((rgba1 >> 8) & 0xff) as f64;
+	let b1 = ((rgba1 >> 16) & 0xff) as f64;
+	let a1 = (rgba1 >> 24) as f64;
 
-  let r2 = ((rgba2 >>  0) & 0xFF) as f64;
-  let g2 = ((rgba2 >>  8) & 0xFF) as f64;
-  let b2 = ((rgba2 >> 16) & 0xFF) as f64;
-  let a2 = ((rgba2 >> 24)       ) as f64;
+	let r2 = ((rgba2 >> 0) & 0xff) as f64;
+	let g2 = ((rgba2 >> 8) & 0xff) as f64;
+	let b2 = ((rgba2 >> 16) & 0xff) as f64;
+	let a2 = (rgba2 >> 24) as f64;
 
 	if (i32(a1 == a2) & i32(r1 == r2) & i32(g1 == g2) & i32(b1 == b2)) {
 		return 0;
@@ -247,7 +273,7 @@ export function rgb2y(r: f64, g: f64, b: f64): f64 {
 // @ts-ignore: decorator
 @inline
 export function rgb2i(r: f64, g: f64, b: f64): f64 {
-	return r * 0.59597799 - g * 0.27417610 - b * 0.32180189;
+	return r * 0.59597799 - g * 0.2741761 - b * 0.32180189;
 }
 
 // @ts-ignore: decorator
@@ -266,21 +292,29 @@ export function blend(c: f64, a: f64): f64 {
 // @ts-ignore: decorator
 @inline
 function drawPixel(outputPtr: usize, pos: i32, r: u8, g: u8, b: u8): void {
-  store<u32>(outputPtr + pos as usize, (r as u32) | ((g as u32) << 8) | ((b as u32) << 16) | 0xFF000000);
+	store<u32>(
+		(outputPtr + pos) as usize,
+		(r as u32) | ((g as u32) << 8) | ((b as u32) << 16) | 0xff000000
+	);
 }
 
 // @ts-ignore: decorator
 @inline
-function drawGrayPixel(imgPtr: usize, i: i32, alpha: f64, outputPtr: usize): void {
-  let rgba = load<u32>(imgPtr + i as usize);
+function drawGrayPixel(
+	imgPtr: usize,
+	i: i32,
+	alpha: f64,
+	outputPtr: usize
+): void {
+	let rgba = load<u32>((imgPtr + i) as usize);
 
-  let r = (rgba >> 0) & 0xFF;
-  let g = (rgba >> 8) & 0xFF;
-  let b = (rgba >>16) & 0xFF;
-  let a = rgba >> 24;
+	let r = (rgba >> 0) & 0xff;
+	let g = (rgba >> 8) & 0xff;
+	let b = (rgba >> 16) & 0xff;
+	let a = rgba >> 24;
 
 	let c1 = rgb2y(r, g, b);
-  let c2 = a * alpha * (1.0 / 255.0);
+	let c2 = a * alpha * (1.0 / 255.0);
 
 	let val = blend(c1, c2) as u8;
 	drawPixel(outputPtr, i, val, val, val);

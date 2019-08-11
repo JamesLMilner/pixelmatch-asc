@@ -4,13 +4,20 @@
     "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --sourceMap --validate -O3 --noAssert",
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized",
     "test": "npm run asbuild:untouched && node test/test.js",
-    "bench": "npm run asbuild:optimized && node test/bench.js"
+    "bench": "npm run asbuild:optimized && node test/bench.js",
+    "lint:fix": "prettier **/*.ts --write"
   },
-  "dependencies": {
-    "pngjs": "^3.4.0",
-    "tape": "^4.11.0"
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint:fix"
+    }
   },
+  "dependencies": {},
   "devDependencies": {
-    "assemblyscript": "github:AssemblyScript/assemblyscript"
+    "pngjs": "^3.4.0",
+    "prettier": "^1.18.2",
+    "tape": "^4.11.0",
+    "assemblyscript": "github:AssemblyScript/assemblyscript",
+    "husky": "^3.0.3"
   }
 }
