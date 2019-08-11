@@ -1,8 +1,6 @@
-export { memory };
-
 export const Uint8Array_ID = idof<Uint8Array>();
 
-export function pixelmatch(	
+export function pixelmatch(
 	// For simplicity and due to lack of union types we just handle Uint8Array
 	img1: Uint8Array,
 	img2: Uint8Array,
@@ -11,49 +9,46 @@ export function pixelmatch(
 	height: i32,
 
 	// Can't use interfaces to make an options object here: https://docs.assemblyscript.org/basics/limitations#oop
-	threshold: f32,     	// matching threshold (0 to 1); smaller is more sensitive
-	includeAA: bool,    	// whether to skip anti-aliasing detection
-	alpha: f32,				// opacity of original image in diff ouput
-	aaR: f32, 				// r color of anti-aliased pixels in diff output
-	aaG: f32,				// g color of anti-aliased pixels in diff output
-	aaB: f32,				// b color of anti-aliased pixels in diff output
-	diffR: f32,				// r color of different pixels in diff output
-	diffG: f32,				// g color of different pixels in diff output
-	diffB: f32				// b color of different pixels in diff output
+	threshold: f64,   // matching threshold (0 to 1); smaller is more sensitive
+	includeAA: bool,  // whether to skip anti-aliasing detection
+	alpha: f64,       // opacity of original image in diff ouput
+	aaR: f64,         // r color of anti-aliased pixels in diff output
+	aaG: f64,         // g color of anti-aliased pixels in diff output
+	aaB: f64,         // b color of anti-aliased pixels in diff output
+	diffR: f64,       // r color of different pixels in diff output
+	diffG: f64,       // g color of different pixels in diff output
+	diffB: f64        // b color of different pixels in diff output
 ): i32 {
 
 	// No Errors: https://docs.assemblyscript.org/basics/limitations#exceptions
 
 	// Image sizes do not match
-	if (img1.length !== img2.length || (output !== null && output.length !== img1.length)) {
-		return -1; 
+	if (img1.length != img2.length || (output !== null && output.length != img1.length)) {
+		return -1;
 	}
 
 	// Image data size does not match width/height.
-	if (img1.length !== width * height * 4) {
+	if (img1.length != width * height * 4) {
 		return -2;
 	}
 
+  let img1Ptr = img1.dataStart;
+  let img2Ptr = img2.dataStart;
+  let outputPtr = output.dataStart;
+
 	threshold = isNaN(threshold) ? 0.1 : threshold;
 	includeAA = includeAA || false;
-	alpha = isNaN(alpha) ? 0.1 : alpha;
+	alpha     = isNaN(alpha) ? 0.1 : alpha;
 
 	// check if images are identical
-	const len: i32 = width * height;
-	let identical: bool = true;
-
-	for (let i = 0; i < len; i++) {
-		if (img1[i] !== img2[i]) {
-			identical = false;
-			break;
-		}
-	}
+	let len = width * height * 4;
+  let identical = memory.compare(img1Ptr, img2Ptr, len) == 0;
 
 	// fast path if identical
-	if (identical) { 
+	if (identical) {
 		if (output) {
-			for (let i = 0; i < len; i++) {
-				drawGrayPixel(img1, 4 * i, alpha, output);
+			for (let i = 0; i < len; i += 4) {
+				drawGrayPixel(img1Ptr, i, alpha, outputPtr);
 			}
 		}
 		return 0;
@@ -61,50 +56,48 @@ export function pixelmatch(
 
 	// maximum acceptable square distance between two colors;
 	// 35215 is the maximum possible value for the YIQ difference metric
-	const maxDelta: f32 = 35215 * threshold * threshold;
+	let maxDelta = 35215.0 * threshold * threshold;
+	let diff = 0;
 
-	let diff: i32 = 0;
-	aaR = isNaN(aaR) ? 255.0 : aaR; 
-	aaG = isNaN(aaG) ? 255.0 : aaG;
-	aaB = isNaN(aaB) ? 0 : aaB;
+	let aaRb: u8 = isNaN(aaR) ? 255 : aaR as u8;
+	let aaGb: u8 = isNaN(aaG) ? 255 : aaG as u8;
+	let aaBb: u8 = isNaN(aaB) ?   0 : aaB as u8;
 
-	diffR = isNaN(diffR) ? 255.0 : diffR;
-	diffG = isNaN(diffG) ? 0 : diffG;
-	diffB = isNaN(diffB) ? 255.0 : diffB;
+	let diffRb: u8 = isNaN(diffR) ? 255 : diffR as u8;
+	let diffGb: u8 = isNaN(diffG) ?   0 : diffG as u8;
+	let diffBb: u8 = isNaN(diffB) ?   0 : diffB as u8;
 
 	// compare each pixel of one image against the other one
 	for (let y = 0; y < height; y++) {
+    let stride = y * width << 2;
 		for (let x = 0; x < width; x++) {
 
-			const pos = (y * width + x) * 4;
+			let pos = stride + (x << 2);
 
 			// squared YUV distance between colors at this pixel position
-			const delta = colorDelta(img1, img2, pos, pos, false);
+			let delta = colorDelta(img1Ptr, img2Ptr, pos, pos);
 
 			// the color difference is above the threshold
 			if (delta > maxDelta) {
 				// check it's a real rendering difference or just anti-aliasing
-				if (
-					!includeAA && 
-					(
-						antialiased(img1, x, y, width, height, img2) ||
-						antialiased(img2, x, y, width, height, img1)
-					)
-				) {
+				if (!includeAA && (
+					antialiased(img1Ptr, x, y, width, height, img2Ptr) ||
+					antialiased(img2Ptr, x, y, width, height, img1Ptr)
+				)) {
 					// // one of the pixels is anti-aliasing; draw as yellow and do not count as difference
 					if (output) {
-						drawPixel(output, pos, aaR, aaG, aaB);
+						drawPixel(outputPtr, pos, aaRb, aaGb, aaBb);
 					}
 				} else {
 					// found substantial difference not caused by anti-aliasing; draw it as red
 					if (output) {
-						drawPixel(output, pos, diffR, diffG, diffB);
+						drawPixel(outputPtr, pos, diffRb, diffGb, diffBb);
 					}
-					diff++;
+					++diff;
 				}
 			} else if (output) {
 				// pixels are similar; draw background as grayscale image blended with white
-				drawGrayPixel(img1, pos, alpha, output);
+				drawGrayPixel(img1Ptr, pos, alpha, outputPtr);
 			}
 		}
 	}
@@ -115,48 +108,47 @@ export function pixelmatch(
 
 // // check if a pixel is likely a part of anti-aliasing;
 // // based on "Anti-aliased Pixel and Intensity Slope Detector" paper by V. Vysniauskas, 2009
-export function antialiased(img: Uint8Array, x1: i32, y1: i32, width: i32, height: i32, img2: Uint8Array): bool {
-	const x0: i32 = Math.max(x1 - 1, 0) as i32;
-	const y0: i32 = Math.max(y1 - 1, 0) as i32;
-	const x2: i32 = Math.min(x1 + 1, width - 1) as i32;
-	const y2: i32 = Math.min(y1 + 1, height - 1) as i32;
-	const pos: i32 = (y1 * width + x1) * 4 as i32;
-	let zeroes = x1 === x0 || x1 === x2 || y1 === y0 || y1 === y2 ? 1 : 0;
+function antialiased(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32, img2Ptr: usize): bool {
+	let x0 = max(x1 - 1, 0);
+	let y0 = max(y1 - 1, 0);
+	let x2 = min(x1 + 1, width - 1);
+	let y2 = min(y1 + 1, height - 1);
+	let pos = (y1 * width + x1) * 4;
+	let zeroes = i32(x1 == x0) | i32(x1 == x2) | i32(y1 == y0) | i32(y1 == y2);
 
-	let min: f32 = 0.0;
-	let max: f32 = 0.0;
+	let min = 0.0;
+	let max = 0.0;
 
-	let minX: i32 = -1;
-	let minY: i32 = -1;
-	let maxX: i32 = -1;
-	let maxY: i32 = -1;
+	let minX = -1;
+	let minY = -1;
+	let maxX = -1;
+	let maxY = -1;
 
 	// go through 8 adjacent pixels
 	for (let x = x0; x <= x2; x++) {
 		for (let y = y0; y <= y2; y++) {
-			if (x === x1 && y === y1) {
+			if (i32(x == x1) & i32(y == y1)) {
 				continue;
 			}
 
 			// brightness delta between the center pixel and adjacent one
-			const delta: f32 = colorDelta(img, img, pos, (((y * width + x) * 4) as i32), true);
+			let delta = colorDelta(imgPtr, imgPtr, pos, (y * width + x) * 4, true);
 
 			// count the number of equal, darker and brighter adjacent pixels
 			if (delta === 0) {
-				zeroes++;
+				++zeroes;
 				// if found more than 2 equal siblings, it's definitely not anti-aliasing
 				if (zeroes > 2) {
 					return false;
 				}
-
 			// remember the darkest pixel
-			} else if (delta  < min) {
+			} else if (delta < min) {
 				min = delta;
 				minX = x;
 				minY = y;
 
 			// remember the brightest pixel
-			} else if (delta  > max) {
+			} else if (delta > max) {
 				max = delta;
 				maxX = x;
 				maxY = y;
@@ -165,40 +157,34 @@ export function antialiased(img: Uint8Array, x1: i32, y1: i32, width: i32, heigh
 	}
 
 	// if there are no both darker and brighter pixels among siblings, it's not anti-aliasing
-	if (min === 0 || max === 0) {
+	if (i32(min == 0) | i32(max == 0)) {
 		return false;
 	}
 
 	// if either the darkest or the brightest pixel has 3+ equal siblings in both images
 	// (definitely not anti-aliased), this pixel is anti-aliased
 	return (
-		hasManySiblings(img, minX, minY, width, height) &&
-		hasManySiblings(img2, minX, minY, width, height)
-	) || (
-		hasManySiblings(img, maxX, maxY, width, height) && hasManySiblings(img2, maxX, maxY, width, height)
-	);
+    (hasManySiblings(imgPtr, minX, minY, width, height) && hasManySiblings(img2Ptr, minX, minY, width, height)) ||
+    (hasManySiblings(imgPtr, maxX, maxY, width, height) && hasManySiblings(img2Ptr, maxX, maxY, width, height))
+  );
 }
 
 // // check if a pixel has 3+ adjacent pixels of the same color.
-export function hasManySiblings(img: Uint8Array, x1: i32, y1: i32, width: i32, height: i32): bool {
-	const x0 = Math.max(x1 - 1, 0);
-	const y0 = Math.max(y1 - 1, 0);
-	const x2 = Math.min(x1 + 1, width - 1);
-	const y2 = Math.min(y1 + 1, height - 1);
-	const pos = (y1 * width + x1) * 4;
-	let zeroes = x1 === x0 || x1 === x2 || y1 === y0 || y1 === y2 ? 1 : 0;
+function hasManySiblings(imgPtr: usize, x1: i32, y1: i32, width: i32, height: i32): bool {
+	let x0 = max(x1 - 1, 0);
+	let y0 = max(y1 - 1, 0);
+	let x2 = min(x1 + 1, width - 1);
+	let y2 = min(y1 + 1, height - 1);
+	let pos = (y1 * width + x1) * 4;
+	let zeroes = i32(x1 == x0) | i32(x1 == x2) | i32(y1 == y0) | i32(y1 == y2);
 
 	// go through 8 adjacent pixels
-	for (let x = x0; x <= x2; x++) {
-		for (let y = y0; y <= y2; y++) {
-			if (x === x1 && y === y1) continue;
-
-			const pos2: i32 = ((y * width + x) * 4) as i32
-			if (img[pos] === img[pos2] &&
-					img[pos + 1] === img[pos2 + 1] &&
-					img[pos + 2] === img[pos2 + 2] &&
-					img[pos + 3] === img[pos2 + 3]) zeroes++;
-
+  for (let y = y0; y <= y2; y++) {
+    let stride = y * width << 2;
+	  for (let x = x0; x <= x2; x++) {
+			if (i32(x == x1) & i32(y == y1)) continue;
+			let pos2 = stride + (x << 2);
+      zeroes += i32(load<u32>(imgPtr + pos as usize) == load<u32>(imgPtr + pos2 as usize));
 			if (zeroes > 2) return true;
 		}
 	}
@@ -208,80 +194,94 @@ export function hasManySiblings(img: Uint8Array, x1: i32, y1: i32, width: i32, h
 
 // // calculate color difference according to the paper "Measuring perceived color difference
 // // using YIQ NTSC transmission color space in mobile applications" by Y. Kotsarenko and F. Ramos
+function colorDelta(img1Ptr: usize, img2Ptr: usize, k: i32, m: i32, yOnly: bool = false): f64 {
+  let rgba1 = load<u32>(img1Ptr + k as usize);
+  let rgba2 = load<u32>(img2Ptr + m as usize);
 
-export function colorDelta(img1: Uint8Array, img2: Uint8Array, k: i32, m: i32, yOnly: bool = false): f32 {
-	let r1: f32 = img1[k + 0] as f32;
-	let g1: f32 = img1[k + 1] as f32;
-	let b1: f32 = img1[k + 2] as f32;
-	let a1: f32 = img1[k + 3] as f32;
+  let r1 = ((rgba1 >>  0) & 0xFF) as f64;
+  let g1 = ((rgba1 >>  8) & 0xFF) as f64;
+  let b1 = ((rgba1 >> 16) & 0xFF) as f64;
+  let a1 = ((rgba1 >> 24)       ) as f64;
 
-	let r2: f32 = img2[m + 0] as f32;
-	let g2: f32 = img2[m + 1] as f32;
-	let b2: f32 = img2[m + 2] as f32;
-	let a2: f32 = img2[m + 3] as f32;
+  let r2 = ((rgba2 >>  0) & 0xFF) as f64;
+  let g2 = ((rgba2 >>  8) & 0xFF) as f64;
+  let b2 = ((rgba2 >> 16) & 0xFF) as f64;
+  let a2 = ((rgba2 >> 24)       ) as f64;
 
-	if (a1 === a2 && r1 === r2 && g1 === g2 && b1 === b2) {
+	if (i32(a1 == a2) & i32(r1 == r2) & i32(g1 == g2) & i32(b1 == b2)) {
 		return 0;
 	}
 
-	if (a1 < (255 as f32)) {
-		a1 /= (255 as f32);
+	if (a1 < 255.0) {
+		a1 *= 1.0 / 255;
 		r1 = blend(r1, a1);
 		g1 = blend(g1, a1);
 		b1 = blend(b1, a1);
 	}
 
-	if (a2 < (255 as f32)) {
-		a2 /= (255 as f32);
+	if (a2 < 255.0) {
+		a2 *= 1.0 / 255;
 		r2 = blend(r2, a2);
 		g2 = blend(g2, a2);
 		b2 = blend(b2, a2);
 	}
 
-	const y: f32 = rgb2y(r1, g1, b1) - rgb2y(r2, g2, b2);
+	let y = rgb2y(r1, g1, b1) - rgb2y(r2, g2, b2);
 
 	if (yOnly) {
 		return y; // brightness difference only
 	}
 
-	const i: f32 = rgb2i(r1, g1, b1) - rgb2i(r2, g2, b2);
-	const q: f32 = rgb2q(r1, g1 , b1) - rgb2q(r2, g2, b2);
+	let i = rgb2i(r1, g1, b1) - rgb2i(r2, g2, b2);
+	let q = rgb2q(r1, g1, b1) - rgb2q(r2, g2, b2);
 
 	return 0.5053 * y * y + 0.299 * i * i + 0.1957 * q * q;
 }
 
-export function rgb2y(r: f32, g: f32, b: f32): f32 { 
-	return (r  * 0.29889531 as f32) + (g * 0.58662247 as f32) + (b * 0.11448223 as f32); 
+// @ts-ignore: decorator
+@inline
+export function rgb2y(r: f64, g: f64, b: f64): f64 {
+	return r * 0.29889531 + g * 0.58662247 + b * 0.11448223;
 }
 
-export function rgb2i(r: f32, g: f32, b: f32): f32 { 
-	return (r * 0.59597799 as f32) - (g * 0.27417610 as f32) - (b * 0.32180189 as f32);
+// @ts-ignore: decorator
+@inline
+export function rgb2i(r: f64, g: f64, b: f64): f64 {
+	return r * 0.59597799 - g * 0.27417610 - b * 0.32180189;
 }
 
-export function rgb2q(r: f32, g: f32, b: f32): f32 { 
-	return (r * 0.21147017) - (g * 0.52261711) + (b * 0.31114694);
+// @ts-ignore: decorator
+@inline
+export function rgb2q(r: f64, g: f64, b: f64): f64 {
+	return r * 0.21147017 - g * 0.52261711 + b * 0.31114694;
 }
 
-// blend semi-transparent color with white
-export function blend(c: f32, a: f32): f32 {
-	return (255 as f32) + (c - (255 as f32)) * a;
+// // blend semi-transparent color with white
+// @ts-ignore: decorator
+@inline
+export function blend(c: f64, a: f64): f64 {
+	return 255 + (c - 255) * a;
 }
 
-export function drawPixel(output: Uint8Array, pos: i32, r: f32, g: f32, b: f32): void {
-	output[pos + 0] = r as u8;
-	output[pos + 1] = g as u8;
-	output[pos + 2] = b as u8;
-	output[pos + 3] = 255 as u8;
+// @ts-ignore: decorator
+@inline
+function drawPixel(outputPtr: usize, pos: i32, r: u8, g: u8, b: u8): void {
+  store<u32>(outputPtr + pos as usize, (r as u32) | ((g as u32) << 8) | ((b as u32) << 16) | 0xFF000000);
 }
 
-export function drawGrayPixel(img: Uint8Array, i: i32, alpha: f32, output: Uint8Array): void {
-	const r: f32 = img[i + 0] as f32;
-	const g: f32 = img[i + 1] as f32;
-	const b: f32 = img[i + 2] as f32;
+// @ts-ignore: decorator
+@inline
+function drawGrayPixel(imgPtr: usize, i: i32, alpha: f64, outputPtr: usize): void {
+  let rgba = load<u32>(imgPtr + i as usize);
 
-	const c1: f32 = rgb2y(r, g, b);
-	const c2: f32 = (alpha * (img[i + 3] as f32)) / (255 as f32)
+  let r = (rgba >> 0) & 0xFF;
+  let g = (rgba >> 8) & 0xFF;
+  let b = (rgba >>16) & 0xFF;
+  let a = rgba >> 24;
 
-	const val: f32 = blend(c1, c2);
-	drawPixel(output, i, val, val, val);
+	let c1 = rgb2y(r, g, b);
+  let c2 = a * alpha * (1.0 / 255.0);
+
+	let val = blend(c1, c2) as u8;
+	drawPixel(outputPtr, i, val, val, val);
 }
