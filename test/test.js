@@ -18,7 +18,7 @@ const wasmModule = loader.instantiate(wasm, imports);
 
 const {
   __allocArray,
-  __getArrayView,
+  __getUint8Array,
   __retain,
   __release,
   Uint8Array_ID,
@@ -124,7 +124,7 @@ function diffTest(imgPath1, imgPath2, diffPath, options, expectedMismatch) {
         const mismatch2 = pixelmatch(ptr1, ptr2, null, width, height, options.threshold, options.includeAA, options.alpha, options.aaColor, options.diffColor);
 
         // Reassign data back to the diff PNG
-        diffPNG.data = Buffer.from(__getArrayView(diffPtr));
+        diffPNG.data = Buffer.from(__getUint8Array(diffPtr));
 
         const expectedDiff = readImage(diffPath);
 
