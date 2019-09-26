@@ -4314,17 +4314,11 @@
       local.get $37
       i32.add
       local.get $36
-      i32.const 255
-      i32.and
       local.get $35
-      i32.const 255
-      i32.and
       i32.const 8
       i32.shl
       i32.or
       local.get $34
-      i32.const 255
-      i32.and
       i32.const 16
       i32.shl
       i32.or
@@ -4495,17 +4489,11 @@
          local.get $37
          i32.add
          local.get $36
-         i32.const 255
-         i32.and
          local.get $35
-         i32.const 255
-         i32.and
          i32.const 8
          i32.shl
          i32.or
          local.get $34
-         i32.const 255
-         i32.and
          i32.const 16
          i32.shl
          i32.or
@@ -4530,17 +4518,11 @@
          local.get $37
          i32.add
          local.get $36
-         i32.const 255
-         i32.and
          local.get $35
-         i32.const 255
-         i32.and
          i32.const 8
          i32.shl
          i32.or
          local.get $34
-         i32.const 255
-         i32.and
          i32.const 16
          i32.shl
          i32.or
@@ -4648,17 +4630,11 @@
         local.get $49
         i32.add
         local.get $48
-        i32.const 255
-        i32.and
         local.get $47
-        i32.const 255
-        i32.and
         i32.const 8
         i32.shl
         i32.or
         local.get $46
-        i32.const 255
-        i32.and
         i32.const 16
         i32.shl
         i32.or

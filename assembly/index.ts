@@ -61,13 +61,13 @@ export function pixelmatch(
 	let maxDelta = 35215.0 * threshold * threshold;
 	let diff = 0;
 
-	let aaRb: u8 = isNaN(aaR) ? 255 : (aaR as u8);
-	let aaGb: u8 = isNaN(aaG) ? 255 : (aaG as u8);
-	let aaBb: u8 = isNaN(aaB) ? 0 : (aaB as u8);
+	let aaRb: u32 = isNaN(aaR) ? 255 : (aaR as u32);
+	let aaGb: u32 = isNaN(aaG) ? 255 : (aaG as u32);
+	let aaBb: u32 = isNaN(aaB) ?   0 : (aaB as u32);
 
-	let diffRb: u8 = isNaN(diffR) ? 255 : (diffR as u8);
-	let diffGb: u8 = isNaN(diffG) ? 0 : (diffG as u8);
-	let diffBb: u8 = isNaN(diffB) ? 0 : (diffB as u8);
+	let diffRb: u32 = isNaN(diffR) ? 255 : (diffR as u32);
+	let diffGb: u32 = isNaN(diffG) ?   0 : (diffG as u32);
+	let diffBb: u32 = isNaN(diffB) ?   0 : (diffB as u32);
 
 	// compare each pixel of one image against the other one
 	for (let y = 0; y < height; y++) {
@@ -291,10 +291,10 @@ export function blend(c: f64, a: f64): f64 {
 
 // @ts-ignore: decorator
 @inline
-function drawPixel(outputPtr: usize, pos: i32, r: u8, g: u8, b: u8): void {
+function drawPixel(outputPtr: usize, pos: i32, r: u32, g: u32, b: u32): void {
 	store<u32>(
 		(outputPtr + pos) as usize,
-		(r as u32) | ((g as u32) << 8) | ((b as u32) << 16) | 0xff000000
+		r | (g << 8) | (b << 16) | 0xff000000
 	);
 }
 
@@ -316,6 +316,6 @@ function drawGrayPixel(
 	let c1 = rgb2y(r, g, b);
 	let c2 = a * alpha * (1.0 / 255.0);
 
-	let val = blend(c1, c2) as u8;
+	let val = blend(c1, c2) as u32;
 	drawPixel(outputPtr, i, val, val, val);
 }

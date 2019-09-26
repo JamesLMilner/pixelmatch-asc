@@ -3118,8 +3118,6 @@
       f64.mul
       f64.add
       i32.trunc_f64_u
-      i32.const 255
-      i32.and
       local.tee $0
       local.get $0
       i32.const 8
@@ -3278,18 +3276,12 @@
          local.get $15
          local.get $22
          i32.add
-         local.get $25
-         i32.const 255
-         i32.and
          local.get $26
-         i32.const 255
-         i32.and
          i32.const 8
          i32.shl
+         local.get $25
          i32.or
          local.get $6
-         i32.const 255
-         i32.and
          i32.const 16
          i32.shl
          i32.or
@@ -3303,18 +3295,12 @@
          local.get $15
          local.get $22
          i32.add
-         local.get $2
-         i32.const 255
-         i32.and
          local.get $1
-         i32.const 255
-         i32.and
          i32.const 8
          i32.shl
+         local.get $2
          i32.or
          local.get $0
-         i32.const 255
-         i32.and
          i32.const 16
          i32.shl
          i32.or
@@ -3375,8 +3361,6 @@
         f64.mul
         f64.add
         i32.trunc_f64_u
-        i32.const 255
-        i32.and
         local.tee $15
         local.get $15
         i32.const 8
