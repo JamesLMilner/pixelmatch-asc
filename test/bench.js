@@ -5,8 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const loader = require("@assemblyscript/loader");
 
-const buf = fs.readFileSync('./build/optimized.wasm');
-const wasmModule = loader.instantiateSync(buf);
+const wasmModule = loader.instantiateSync(fs.readFileSync('./build/optimized.wasm'));
 
 const {
     performance

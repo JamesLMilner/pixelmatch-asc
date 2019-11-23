@@ -6,8 +6,7 @@ const test = require('tape').test;
 const path = require('path');
 const loader = require("@assemblyscript/loader");
 
-const buf = fs.readFileSync('./build/untouched.wasm');
-const wasmModule = loader.instantiateSync(new Uint8Array(buf));
+const wasmModule = loader.instantiateSync(fs.readFileSync('./build/untouched.wasm'));
 
 const {
   __allocArray,
