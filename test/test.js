@@ -4,17 +4,10 @@ const PNG = require('pngjs').PNG;
 const fs = require('fs');
 const test = require('tape').test;
 const path = require('path');
-const loader = require("assemblyscript/lib/loader");
+const loader = require("@assemblyscript/loader");
 
 const buf = fs.readFileSync('./build/untouched.wasm');
-const wasm = new WebAssembly.Module(new Uint8Array(buf));
-const imports = {
-  env: {
-    abort(err) { console.error(err) }
-  }
-};
-
-const wasmModule = loader.instantiate(wasm, imports);
+const wasmModule = loader.instantiateSync(new Uint8Array(buf));
 
 const {
   __allocArray,
