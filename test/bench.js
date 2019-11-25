@@ -3,13 +3,9 @@
 const PNG = require('pngjs').PNG;
 const fs = require('fs');
 const path = require('path');
-const loader = require("assemblyscript/lib/loader");
+const loader = require("@assemblyscript/loader");
 
-const buf = fs.readFileSync('./build/optimized.wasm');
-const wasm = new WebAssembly.Module(new Uint8Array(buf));
-const wasmModule = loader.instantiate(wasm, { env: { abort: (err) => {
-    console.error(err)
-}}});
+const wasmModule = loader.instantiateSync(fs.readFileSync('./build/optimized.wasm'));
 
 const {
     performance
