@@ -12,9 +12,12 @@
       "pre-commit": "npm run lint:fix"
     }
   },
-  "dependencies": {},
+  "dependencies": {
+    "@assemblyscript/loader": "^0.9.4",
+    "pixelmatch": "^5.1.0"
+  },
   "devDependencies": {
-    "assemblyscript": "github:AssemblyScript/assemblyscript",
+    "assemblyscript": "^0.9.4",
     "husky": "^3.0.3",
     "pngjs": "^3.4.0",
     "prettier": "^1.18.2",
